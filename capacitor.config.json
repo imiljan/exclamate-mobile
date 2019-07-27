@@ -1,0 +1,7 @@
+{
+  "appId": "com.example.app",
+  "appName": "ExclamatE",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www"
+}

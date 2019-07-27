@@ -1,11 +1,11 @@
 {
-  "extends": "tslint:recommended",
+  "extends": ["tslint:recommended", "tslint-config-prettier"],
   "rulesDirectory": [
     "codelyzer"
   ],
   "rules": {
     "array-type": false,
-    "arrow-parens": false,
+    "arrow-parens": true,
     "deprecation": {
       "severity": "warn"
     },
