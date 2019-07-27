@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 
 import { AuthService } from '../auth.service';
 
@@ -15,6 +15,7 @@ export class LoginPage implements OnInit {
 
   constructor(
     private authService: AuthService,
+    private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
     private router: Router
   ) {}
@@ -31,19 +32,37 @@ export class LoginPage implements OnInit {
     form.reset();
   }
 
-  authenticate(username: string, password: string) {
+  async authenticate(username: string, password: string) {
     this.isLoading = true;
-    this.loadingCtrl.create({ keyboardClose: true, message: 'Logging in...' }).then((loadingEl) => {
-      loadingEl.present();
+    await this.loadingCtrl
+      .create({ keyboardClose: true, message: 'Logging in...' })
+      .then((loadingEl) => {
+        loadingEl.present();
+        this.authService
+          .login(username, password)
+          .then((res) => {
+            // TODO Save user in storage
+            console.log('auth resp', res);
 
-      const authResp = this.authService.login(username, password);
-      // TODO Save user in storage
-
-      if (authResp) {
-        console.log('Login ok');
-        this.isLoading = false;
-        loadingEl.dismiss();
-      }
-    });
+            if (res) {
+              console.log('Login ok');
+              this.isLoading = false;
+              loadingEl.dismiss();
+              this.router.navigateByUrl('/home');
+            }
+          })
+          .catch((errorResp) => {
+            console.log('error resp', errorResp);
+            // TODO change message
+            loadingEl.dismiss();
+            this.alertCtrl
+              .create({
+                header: 'Authentication failed',
+                message: errorResp.message.split(':')[1],
+                buttons: ['Okay'],
+              })
+              .then((alertEl) => alertEl.present());
+          });
+      });
   }
 }
