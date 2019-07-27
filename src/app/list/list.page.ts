@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-list',
   templateUrl: 'list.page.html',
-  styleUrls: ['list.page.scss']
+  styleUrls: ['list.page.scss'],
 })
 export class ListPage implements OnInit {
   private selectedItem: any;
@@ -17,7 +17,7 @@ export class ListPage implements OnInit {
     'american-football',
     'boat',
     'bluetooth',
-    'build'
+    'build',
   ];
   public items: Array<{ title: string; note: string; icon: string }> = [];
   constructor() {
@@ -25,13 +25,12 @@ export class ListPage implements OnInit {
       this.items.push({
         title: 'Item ' + i,
         note: 'This is item #' + i,
-        icon: this.icons[Math.floor(Math.random() * this.icons.length)]
+        icon: this.icons[Math.floor(Math.random() * this.icons.length)],
       });
     }
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
   // add back when alpha.4 is out
   // navigate(item) {
   //   this.router.navigate(['/list', JSON.stringify(item)]);
