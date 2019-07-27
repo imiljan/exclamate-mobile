@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { Apollo } from 'apollo-angular';
+import { ApolloQueryResult } from 'apollo-client';
+import gql from 'graphql-tag';
 
 @Component({
   selector: 'app-home',
@@ -6,5 +9,17 @@ import { Component } from '@angular/core';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-  constructor() {}
+  constructor(private apollo: Apollo) {
+    this.apollo
+      .watchQuery({
+        query: gql`
+          {
+            hello
+          }
+        `,
+      })
+      .valueChanges.subscribe((res: ApolloQueryResult<{ hello: string }>) => {
+        console.log(res);
+      });
+  }
 }
