@@ -4,7 +4,7 @@
       <ion-back-button defaultHref="auth"></ion-back-button>
     </ion-buttons>
     <ion-icon name="alert" color="primary" size="large" slot="end" padding></ion-icon>
-    <ion-title>Login</ion-title>
+    <ion-title>Register</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -34,6 +34,28 @@
                 Should at least be 6 characters long.
               </ion-label>
             </ion-item>
+            <ion-item>
+              <ion-label position="floating">Email</ion-label>
+              <ion-input
+                type="email"
+                ngModel
+                name="email"
+                required
+                email
+                #emailCtrl="ngModel"
+              ></ion-input>
+            </ion-item>
+            <ion-item *ngIf="!emailCtrl.valid && emailCtrl.touched" lines="none">
+              <ion-label> Should be a valid email address </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">First Name</ion-label>
+              <ion-input type="text" ngModel name="firstName" required></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">Last Name</ion-label>
+              <ion-input type="text" ngModel name="lastName" required></ion-input>
+            </ion-item>
           </ion-list>
         </ion-col>
       </ion-row>
@@ -46,7 +68,7 @@
             shape="round"
             [disabled]="!f.valid"
           >
-            Login
+            Register
           </ion-button>
         </ion-col>
       </ion-row>

@@ -31,7 +31,6 @@ export class AuthService implements OnDestroy {
   }
 
   login(username: string, password: string) {
-    console.log('Auth service login', username, password);
     return this.apollo
       .query({
         query: gql`
@@ -48,6 +47,33 @@ export class AuthService implements OnDestroy {
       .then((res: ApolloQueryResult<{ login: number }>) => {
         console.log(res);
         this.setUserData(new User(res.data.login, null));
+        return true;
+      });
+  }
+
+  register(username: string, password: string, email: string, firstName: string, lastName: string) {
+    return this.apollo
+      .mutate({
+        mutation: gql`
+          mutation RegisterUser($input: RegisterInput!) {
+            register(userData: $input)
+          }
+        `,
+        variables: {
+          input: {
+            username,
+            password,
+            firstName,
+            lastName,
+            email,
+          },
+        },
+      })
+      .toPromise()
+      .then((res: ApolloQueryResult<{ register: string }>) => {
+        console.log(res);
+        this.setUserData(new User(res.data.register, null));
+
         return true;
       });
   }

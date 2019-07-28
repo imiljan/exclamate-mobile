@@ -6,51 +6,57 @@ import { AlertController, LoadingController } from '@ionic/angular';
 import { AuthService } from '../auth.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.page.html',
-  styleUrls: ['./login.page.scss'],
+  selector: 'app-register',
+  templateUrl: './register.page.html',
+  styleUrls: ['./register.page.scss'],
 })
-export class LoginPage implements OnInit {
+export class RegisterPage implements OnInit {
   constructor(
-    private authService: AuthService,
     private alertCtrl: AlertController,
+    private authService: AuthService,
     private loadingCtrl: LoadingController,
     private router: Router
   ) {}
-
   ngOnInit() {}
 
   onSubmit(form: NgForm) {
     if (!form.valid) {
       return;
     }
-    const { username, password } = form.value;
+    console.log(form.value);
+    const { username, password, email, firstName, lastName } = form.value;
 
-    this.authenticate(username, password);
+    this.register(username, password, email, firstName, lastName);
     form.reset();
   }
 
-  private authenticate(username: string, password: string) {
+  private register(
+    username: string,
+    password: string,
+    email: string,
+    firstName: string,
+    lastName: string
+  ) {
     this.loadingCtrl.create({ keyboardClose: true, message: 'Logging in...' }).then((loadingEl) => {
       loadingEl.present();
       this.authService
-        .login(username, password)
+        .register(username, password, email, firstName, lastName)
         .then((res) => {
           console.log('auth resp', res);
 
           if (res) {
-            console.log('Login ok');
+            console.log('Register ok');
             loadingEl.dismiss();
             this.router.navigateByUrl('/home');
           }
         })
         .catch((errorResp) => {
-          console.log('error resp', errorResp);
+          console.log('registration error resp', errorResp);
           // TODO change message
           loadingEl.dismiss();
           this.alertCtrl
             .create({
-              header: 'Authentication failed',
+              header: 'Registration failed',
               message: errorResp.message.split(':')[1],
               buttons: ['Okay'],
             })
