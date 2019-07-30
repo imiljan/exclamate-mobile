@@ -3,7 +3,7 @@ import { Plugins } from '@capacitor/core';
 import { Apollo } from 'apollo-angular';
 import { ApolloQueryResult } from 'apollo-client';
 import gql from 'graphql-tag';
-import { BehaviorSubject, from } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { User } from './user.model';
@@ -65,6 +65,11 @@ export class AuthService {
       });
   }
 
+  logout() {
+    this._storedToken.next(null);
+    Storage.remove({ key: 'authData' });
+  }
+
   register(username: string, password: string, email: string, firstName: string, lastName: string) {
     return this.apollo
       .mutate({
@@ -101,21 +106,26 @@ export class AuthService {
   }
 
   autoLogin() {
-    return from(Storage.get({ key: 'authData' })).pipe(
-      map((storedData) => {
-        if (!storedData || !storedData.value) {
-          return null;
-        }
-        const parsedData = JSON.parse(storedData.value) as { token: string };
-        this._storedToken.next(parsedData.token);
-        return !!parsedData.token;
-      })
-    );
-  }
-
-  logout() {
-    this._storedToken.next(null);
-    Storage.remove({ key: 'authData' });
+    return Storage.get({ key: 'authData' }).then((storedData) => {
+      if (!storedData || !storedData.value) {
+        return null;
+      }
+      const parsedData = JSON.parse(storedData.value) as { token: string };
+      this._storedToken.next(parsedData.token);
+      console.log('Found user in storage', parsedData);
+      return !!parsedData.token;
+    });
+    // );  return from(Storage.get({ key: 'authData' })).pipe(
+    //   map((storedData) => {
+    //     if (!storedData || !storedData.value) {
+    //       return null;
+    //     }
+    //     const parsedData = JSON.parse(storedData.value) as { token: string };
+    //     this._storedToken.next(parsedData.token);
+    //     console.log('Found user in storage', parsedData);
+    //     return !!parsedData.token;
+    //   })
+    // );
   }
 
   private setUserData(token: string) {
