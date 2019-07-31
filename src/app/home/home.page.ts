@@ -4,8 +4,6 @@ import { Apollo } from 'apollo-angular';
 import { ApolloQueryResult } from 'apollo-client';
 import gql from 'graphql-tag';
 
-import { AuthService } from '../auth/auth.service';
-
 const { Storage } = Plugins;
 
 @Component({
@@ -14,7 +12,7 @@ const { Storage } = Plugins;
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  constructor(private apollo: Apollo, private authService: AuthService) {
+  constructor(private apollo: Apollo) {
     this.apollo
       .watchQuery({
         query: gql`
@@ -23,9 +21,14 @@ export class HomePage implements OnInit {
           }
         `,
       })
-      .valueChanges.subscribe((res: ApolloQueryResult<{ hello: string }>) => {
-        console.log(res.data);
-      });
+    .valueChanges.subscribe(
+      (res: ApolloQueryResult<{ hello: string }>) => {
+        console.log(res);
+      },
+      (err) => {
+        console.log(err);
+      },
+    );
   }
 
   ngOnInit(): void {
