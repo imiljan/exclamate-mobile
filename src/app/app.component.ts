@@ -15,19 +15,6 @@ const { App, Storage, SplashScreen } = Plugins;
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  public appPages = [
-    {
-      title: 'Home',
-      url: '/home',
-      icon: 'home',
-    },
-    {
-      title: 'List',
-      url: '/list',
-      icon: 'list',
-    },
-  ];
-
   private authSub: Subscription;
   private previousAuthState = false;
 

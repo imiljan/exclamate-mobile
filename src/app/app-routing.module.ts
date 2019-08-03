@@ -19,8 +19,8 @@ const routes: Routes = [
     canLoad: [AuthGuard],
   },
   {
-    path: 'list',
-    loadChildren: './list/list.module#ListPageModule',
+    path: 'profile',
+    loadChildren: './profile/profile.module#ProfilePageModule',
     canLoad: [AuthGuard],
   },
 ];

@@ -3,22 +3,17 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
-import { AuthPage } from './auth.page';
+import { PostPage } from './post.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: AuthPage,
-  },
-  { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
-  {
-    path: 'register',
-    loadChildren: './register/register.module#RegisterPageModule',
+    component: PostPage,
   },
 ];
 
 @NgModule({
   imports: [CommonModule, IonicModule, RouterModule.forChild(routes)],
-  declarations: [AuthPage],
+  declarations: [PostPage],
 })
-export class AuthPageModule {}
+export class PostPageModule {}
