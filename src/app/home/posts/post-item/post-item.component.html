@@ -1,0 +1,48 @@
+<ion-card style="margin: 8px">
+  <ion-item>
+    <ion-avatar slot="start">
+      <ion-img [src]="'https://placekitten.com/100/100'"></ion-img>
+    </ion-avatar>
+    <!-- <ion-label padding-left margin-left>Card Title {{ i }}</ion-label> -->
+    <div class="post-header">
+      <h4 class="post-username">Username {{ temp }}</h4>
+      <p class="post-date">{{ '2012-01-02' | date: 'short' }}</p>
+    </div>
+  </ion-item>
+
+  <ion-card-content>
+    Keep close to Nature's heart... and break clear away, once in awhile, and climb a mountain or
+    spend a week in the woods. Wash your spirit clean.
+  </ion-card-content>
+
+  <ion-row>
+    <ion-col size-md="8" offset-md="2">
+      <div class="icons">
+        <ion-item lines="none">
+          <ion-button fill="clear">
+            <ion-icon slot="icon-only" name="open"></ion-icon>1
+          </ion-button>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-button fill="clear">
+            <ion-icon slot="icon-only" name="open"></ion-icon>2
+          </ion-button>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-button fill="clear">
+            <ion-icon slot="icon-only" name="open"></ion-icon>3
+          </ion-button>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-button fill="clear">
+            <ion-icon slot="icon-only" name="open"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </div>
+      <ion-button *ngIf="temp == 1" fill="outline" style="margin-left: 5%">
+        Show Thread
+        <ion-icon slot="start" name="add"></ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-card>
