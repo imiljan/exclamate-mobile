@@ -1,6 +1,6 @@
 {
-  "appId": "com.example.app",
-  "appName": "ExclamatE",
+  "appId": "io.ionic.starter",
+  "appName": "exclamate-mobile",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "www"

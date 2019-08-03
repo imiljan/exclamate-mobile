@@ -23,7 +23,6 @@ export class RegisterPage implements OnInit {
     if (!form.valid) {
       return;
     }
-    console.log(form.value);
     const { username, password, email, firstName, lastName } = form.value;
 
     this.register(username, password, email, firstName, lastName);
@@ -39,18 +38,14 @@ export class RegisterPage implements OnInit {
   ) {
     this.loadingCtrl.create({ keyboardClose: true, message: 'Logging in...' }).then((loadingEl) => {
       loadingEl.present();
-      this.authService
-        .register(username, password, email, firstName, lastName)
-        .then((res) => {
-          console.log('auth resp', res);
-
-          if (res) {
-            console.log('Register ok');
+      this.authService.register(username, password, email, firstName, lastName).subscribe(
+        (res) => {
+          if (!res.loading) {
             loadingEl.dismiss();
             this.router.navigateByUrl('/home');
           }
-        })
-        .catch((errorResp) => {
+        },
+        (errorResp) => {
           console.log('registration error resp', errorResp);
           // TODO change message
           loadingEl.dismiss();
@@ -61,7 +56,8 @@ export class RegisterPage implements OnInit {
               buttons: ['Okay'],
             })
             .then((alertEl) => alertEl.present());
-        });
+        }
+      );
     });
   }
 }

@@ -1,15 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Capacitor, Plugins } from '@capacitor/core';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { AppState, Capacitor, Plugins } from '@capacitor/core';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 import { AuthService } from './auth/auth.service';
 
-const { Storage } = Plugins;
-
-// TODO Check AutoLogin flow on phone
+const { App, Storage, SplashScreen } = Plugins;
 
 @Component({
   selector: 'app-root',
@@ -31,11 +29,10 @@ export class AppComponent implements OnInit, OnDestroy {
   ];
 
   private authSub: Subscription;
+  private previousAuthState = false;
 
   constructor(
     private platform: Platform,
-    // private splashScreen: SplashScreen,
-    private statusBar: StatusBar,
     private authService: AuthService,
     private router: Router
   ) {
@@ -44,26 +41,20 @@ export class AppComponent implements OnInit, OnDestroy {
 
   initializeApp() {
     this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
       if (Capacitor.isPluginAvailable('SplashScreen')) {
-        Plugins.SplashScreen.hide();
+        SplashScreen.hide();
       }
     });
   }
 
   ngOnInit() {
+    Plugins.App.addListener('appStateChange', this.checkAuthOnResume.bind(this));
+
     this.authSub = this.authService.userIsAuthenticated.subscribe((isAuth) => {
-      if (!isAuth) {
-        Storage.get({ key: 'authData' }).then((storedData) => {
-          if (!storedData.value) {
-            this.router.navigate(['auth']);
-          } else {
-            this.authService.autoLogin().then(() => {
-              this.router.navigate(['home']);
-            });
-          }
-        });
+      if (!isAuth && this.previousAuthState !== isAuth) {
+        this.router.navigate(['auth']);
       }
+      this.previousAuthState = isAuth;
     });
   }
 
@@ -74,6 +65,19 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.authSub) {
       this.authSub.unsubscribe();
+    }
+  }
+
+  private checkAuthOnResume(state: AppState) {
+    if (state.isActive) {
+      this.authService
+        .autoLogin()
+        .pipe(take(1))
+        .subscribe((success) => {
+          if (!success) {
+            this.onLogout();
+          }
+        });
     }
   }
 }

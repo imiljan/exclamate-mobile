@@ -3,8 +3,8 @@ import { Plugins } from '@capacitor/core';
 import { Apollo } from 'apollo-angular';
 import { ApolloQueryResult } from 'apollo-client';
 import gql from 'graphql-tag';
-import { BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, from } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 import { User } from './user.model';
 
@@ -19,15 +19,7 @@ export class AuthService {
   constructor(private apollo: Apollo) {}
 
   get storedToken() {
-    return this._storedToken.asObservable().pipe(
-      map((token) => {
-        if (token) {
-          return token;
-        } else {
-          return null;
-        }
-      })
-    );
+    return this._storedToken.asObservable();
   }
 
   get userIsAuthenticated() {
@@ -57,12 +49,11 @@ export class AuthService {
           password,
         },
       })
-      .toPromise()
-      .then((res: ApolloQueryResult<{ login: { token: string } }>) => {
-        console.log(res);
-        this.setUserData(res.data.login.token);
-        return true;
-      });
+      .pipe(
+        tap((res: ApolloQueryResult<{ login: { token: string } }>) => {
+          this.setUserData(res.data.login.token);
+        })
+      );
   }
 
   logout() {
@@ -97,35 +88,29 @@ export class AuthService {
           },
         },
       })
-      .toPromise()
-      .then((res: ApolloQueryResult<{ register: { user: User; token: string } }>) => {
-        console.log(res);
-        this.setUserData(res.data.register.token);
-        return true;
-      });
+      .pipe(
+        tap((res: ApolloQueryResult<{ register: { user: User; token: string } }>) => {
+          this.setUserData(res.data.register.token);
+        })
+      );
   }
 
   autoLogin() {
-    return Storage.get({ key: 'authData' }).then((storedData) => {
-      if (!storedData || !storedData.value) {
-        return null;
-      }
-      const parsedData = JSON.parse(storedData.value) as { token: string };
-      this._storedToken.next(parsedData.token);
-      console.log('Found user in storage', parsedData);
-      return !!parsedData.token;
-    });
-    // );  return from(Storage.get({ key: 'authData' })).pipe(
-    //   map((storedData) => {
-    //     if (!storedData || !storedData.value) {
-    //       return null;
-    //     }
-    //     const parsedData = JSON.parse(storedData.value) as { token: string };
-    //     this._storedToken.next(parsedData.token);
-    //     console.log('Found user in storage', parsedData);
-    //     return !!parsedData.token;
-    //   })
-    // );
+    return from(Storage.get({ key: 'authData' })).pipe(
+      map((storedData) => {
+        if (!storedData || !storedData.value) {
+          return null;
+        }
+        const parsedData = JSON.parse(storedData.value) as { token: string };
+        console.log('Found user in storage', parsedData);
+        return parsedData.token;
+      }),
+      tap((token) => {
+        console.log('Token stored in memory', token);
+        this._storedToken.next(token);
+      }),
+      map((token) => !!token)
+    );
   }
 
   private setUserData(token: string) {

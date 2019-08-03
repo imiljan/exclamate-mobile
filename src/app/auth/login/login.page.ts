@@ -33,18 +33,14 @@ export class LoginPage implements OnInit {
   private authenticate(username: string, password: string) {
     this.loadingCtrl.create({ keyboardClose: true, message: 'Logging in...' }).then((loadingEl) => {
       loadingEl.present();
-      this.authService
-        .login(username, password)
-        .then((res) => {
-          console.log('auth resp', res);
-
-          if (res) {
-            console.log('Login ok');
+      this.authService.login(username, password).subscribe(
+        (res) => {
+          if (!res.loading) {
             loadingEl.dismiss();
             this.router.navigateByUrl('/home');
           }
-        })
-        .catch((errorResp) => {
+        },
+        (errorResp) => {
           console.log('error resp', errorResp);
           // TODO change message
           loadingEl.dismiss();
@@ -55,7 +51,8 @@ export class LoginPage implements OnInit {
               buttons: ['Okay'],
             })
             .then((alertEl) => alertEl.present());
-        });
+        }
+      );
     });
   }
 }

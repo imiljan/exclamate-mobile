@@ -1,5 +1,7 @@
 {
   "name": "exclamate-mobile",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }
