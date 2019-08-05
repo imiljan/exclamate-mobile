@@ -12,40 +12,14 @@
     <ion-list-header>
       <ion-label>New</ion-label>
     </ion-list-header>
-    <ion-item *ngFor="let i of [1, 2, 3]">
-      <ion-avatar slot="start">
-        <img src="https://placekitten.com/200/200" />
-      </ion-avatar>
-      <ion-label>
-        <div style="display: flex;justify-content: space-between">
-          <h1 style="display: inline; margin: 0">Username{{ i }}</h1>
-          <span style="font-size: 12px; font-style: italic">
-            {{ '2012-01-02' | date: 'short' }}
-          </span>
-        </div>
-        <p no-margin>Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
-      </ion-label>
-    </ion-item>
+    <app-notification-item *ngFor="let i of [1,2,3]" [temp]="i"></app-notification-item>
   </ion-list>
   <ion-list>
     <ion-list>
       <ion-list-header>
         <ion-label>Older</ion-label>
       </ion-list-header>
-      <ion-item *ngFor="let i of [4, 5, 6, 7]">
-        <ion-avatar slot="start">
-          <img src="https://placekitten.com/200/200" />
-        </ion-avatar>
-        <ion-label>
-          <div style="display: flex;justify-content: space-between">
-            <h1 style="display: inline; margin: 0">Username{{ i }}</h1>
-            <span style="font-size: 12px; font-style: italic">
-              {{ '2012-01-02' | date: 'short' }}
-            </span>
-          </div>
-          <p no-margin>Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
-        </ion-label>
-      </ion-item>
+      <app-notification-item *ngFor="let i of [4,5,6]" [temp]="i"></app-notification-item>
     </ion-list>
   </ion-list>
 </ion-content>

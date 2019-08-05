@@ -7,7 +7,7 @@ import { take } from 'rxjs/operators';
 
 import { AuthService } from './auth/auth.service';
 
-const { App, Storage, SplashScreen } = Plugins;
+const { App, SplashScreen } = Plugins;
 
 @Component({
   selector: 'app-root',
@@ -35,7 +35,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    Plugins.App.addListener('appStateChange', this.checkAuthOnResume.bind(this));
+    App.addListener('appStateChange', this.checkAuthOnResume.bind(this));
 
     this.authSub = this.authService.userIsAuthenticated.subscribe((isAuth) => {
       if (!isAuth && this.previousAuthState !== isAuth) {

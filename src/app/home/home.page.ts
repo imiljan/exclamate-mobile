@@ -21,14 +21,14 @@ export class HomePage implements OnInit {
           }
         `,
       })
-    .valueChanges.subscribe(
-      (res: ApolloQueryResult<{ hello: string }>) => {
-        console.log(res);
-      },
-      (err) => {
-        console.log(err);
-      },
-    );
+      .valueChanges.subscribe(
+        (res: ApolloQueryResult<{ hello: string }>) => {
+          console.log(res);
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
   }
 
   ngOnInit(): void {

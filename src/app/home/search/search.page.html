@@ -3,12 +3,12 @@
     <ion-buttons slot="start">
       <ion-menu-button side="start" type="overlay"></ion-menu-button>
     </ion-buttons>
-    <ion-searchbar
-      placeholder="Search"
-      (ionChange)="onSearchChange($event)"
-      [debounce]="500"
-      animated
-      autocomplete="on"
+    <ion-searchbar mode="ios"
+                   placeholder="Search"
+                   (ionChange)="onSearchChange($event)"
+                   [debounce]="500"
+                   animated
+                   autocomplete="on"
     ></ion-searchbar>
   </ion-toolbar>
 </ion-header>
