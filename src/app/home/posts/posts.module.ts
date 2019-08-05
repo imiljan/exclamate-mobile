@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { PostsPage } from './posts.page';
 import { SharedModule } from '../../shared/shared.module';
+import { AddPostComponent } from './add-post/add-post.component';
 
 const routes: Routes = [
   {
@@ -14,6 +15,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [CommonModule, IonicModule, RouterModule.forChild(routes), SharedModule],
-  declarations: [PostsPage],
+  declarations: [PostsPage, AddPostComponent],
+  entryComponents: [AddPostComponent],
 })
 export class PostsPageModule {}

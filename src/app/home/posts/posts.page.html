@@ -9,4 +9,9 @@
 
 <ion-content>
   <app-post-item *ngFor="let i of [1, 2, 3]" [temp]="i"></app-post-item>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="onAddPost()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

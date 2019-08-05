@@ -13,4 +13,6 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content> </ion-content>
+<ion-content>
+  <app-post-item *ngFor="let i of [1, 2, 3]" [temp]="i"></app-post-item>
+</ion-content>

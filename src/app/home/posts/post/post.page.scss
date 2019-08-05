@@ -1,0 +1,28 @@
+.icons {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 0 !important;
+}
+
+.icons:first-child {
+  margin-left: 20px;
+}
+
+.icons:last-child {
+  margin-right: 20px;
+}
+
+.post-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.post-username {
+  margin-bottom: 0;
+}
+
+.post-date {
+  margin-top: 0;
+  font-size: 12px;
+  font-style: italic;
+}
