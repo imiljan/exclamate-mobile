@@ -8,27 +8,31 @@
       <p class="post-date">{{ '2012-01-02' | date: 'short' }}</p>
     </div>
   </ion-item>
-  <ion-card-content>
+  <ion-card-content (click)="openPost()">
     Keep close to Nature's heart... and break clear away, once in awhile, and climb a mountain or
     spend a week in the woods. Wash your spirit clean.
   </ion-card-content>
   <div class="icons">
     <ion-item lines="none">
-      <ion-button fill="clear"> <ion-icon slot="icon-only" name="open"></ion-icon>1</ion-button>
-    </ion-item>
-    <ion-item lines="none">
-      <ion-button fill="clear"> <ion-icon slot="icon-only" name="open"></ion-icon>2</ion-button>
-    </ion-item>
-    <ion-item lines="none">
-      <ion-button fill="clear"> <ion-icon slot="icon-only" name="open"></ion-icon>3</ion-button>
+      <ion-button fill="clear">
+        <ion-icon slot="icon-only" name="crop"></ion-icon>
+        3
+      </ion-button>
     </ion-item>
     <ion-item lines="none">
       <ion-button fill="clear">
-        <ion-icon slot="icon-only" name="open"></ion-icon>
+        <ion-icon slot="icon-only" name="chatbubbles"></ion-icon>
+        1
+      </ion-button>
+    </ion-item>
+    <ion-item lines="none">
+      <ion-button fill="clear">
+        <ion-icon slot="icon-only" name="heart-empty"></ion-icon>
+        2
       </ion-button>
     </ion-item>
   </div>
-  <ion-button *ngIf="temp == 1" fill="outline" style="margin-left: 5%">
+  <ion-button *ngIf="temp == 1" fill="clear">
     Show Thread
     <ion-icon slot="start" name="add"></ion-icon>
   </ion-button>

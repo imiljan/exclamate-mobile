@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { PostsPage } from './posts.page';
 import { SharedModule } from '../../shared/shared.module';
 import { AddPostComponent } from './add-post/add-post.component';
+import { FormsModule } from '@angular/forms';
 
 const routes: Routes = [
   {
@@ -14,7 +15,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [CommonModule, IonicModule, RouterModule.forChild(routes), SharedModule],
+  imports: [CommonModule, IonicModule, FormsModule, RouterModule.forChild(routes), SharedModule],
   declarations: [PostsPage, AddPostComponent],
   entryComponents: [AddPostComponent],
 })

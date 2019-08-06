@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-post-item',
@@ -8,7 +9,11 @@ import { Component, Input, OnInit } from '@angular/core';
 export class PostItemComponent implements OnInit {
   @Input() temp: number;
 
-  constructor() {}
+  constructor(private router: Router) {}
 
   ngOnInit() {}
+
+  openPost() {
+    this.router.navigate(['home', 'tabs', 'posts', '123']);
+  }
 }

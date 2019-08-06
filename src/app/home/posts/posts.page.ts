@@ -19,6 +19,7 @@ export class PostsPage implements OnInit {
           return;
         }
         console.log(modalData.data);
+        console.log(modalData.role);
       });
       modalEl.present();
     });
