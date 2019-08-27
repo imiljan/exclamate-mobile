@@ -4,13 +4,12 @@
       <ion-img [src]="'https://placekitten.com/100/100'"></ion-img>
     </ion-avatar>
     <div class="post-header">
-      <h4 class="post-username">Username {{ temp }}</h4>
-      <p class="post-date">{{ '2012-01-02' | date: 'short' }}</p>
+      <h4 class="post-username">{{ post.user.username }}</h4>
+      <p class="post-date">{{ post.created | date: 'short' }}</p>
     </div>
   </ion-item>
   <ion-card-content (click)="openPost()">
-    Keep close to Nature's heart... and break clear away, once in awhile, and climb a mountain or
-    spend a week in the woods. Wash your spirit clean.
+    {{ post.body }}
   </ion-card-content>
   <div class="icons">
     <ion-item lines="none">
@@ -32,7 +31,7 @@
       </ion-button>
     </ion-item>
   </div>
-  <ion-button *ngIf="temp == 1" fill="clear">
+  <ion-button *ngIf="false" fill="clear">
     Show Thread
     <ion-icon slot="start" name="add"></ion-icon>
   </ion-button>

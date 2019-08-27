@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Post } from 'src/generated/graphql';
 
 @Component({
   selector: 'app-post-item',
@@ -7,7 +8,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./post-item.component.scss'],
 })
 export class PostItemComponent implements OnInit {
-  @Input() temp: number;
+  @Input() post: Post;
 
   constructor(private router: Router) {}
 

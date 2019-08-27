@@ -8,7 +8,10 @@
 </ion-header>
 
 <ion-content>
-  <app-post-item *ngFor="let i of [1, 2, 3]" [temp]="i"></app-post-item>
+  <ion-spinner *ngIf="isLoading; else showPosts"></ion-spinner>
+  <ng-template #showPosts>
+    <app-post-item *ngFor="let p of posts" [post]="p"></app-post-item>
+  </ng-template>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="onAddPost()">
       <ion-icon name="add"></ion-icon>
