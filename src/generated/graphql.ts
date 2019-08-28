@@ -54,7 +54,6 @@ export type Post = {
 export type Query = {
   __typename?: 'Query',
   _?: Maybe<Scalars['Boolean']>,
-  hello: Scalars['String'],
   login: Token,
   me: User,
   getPost?: Maybe<Post>,
@@ -70,6 +69,12 @@ export type QueryLoginArgs = {
 
 export type QueryGetPostArgs = {
   id: Scalars['ID']
+};
+
+
+export type QueryGetPostsArgs = {
+  offset?: Maybe<Scalars['Int']>,
+  limit?: Maybe<Scalars['Int']>
 };
 
 export type RegisterInput = {
@@ -155,7 +160,10 @@ export type PostPageQueryQuery = (
   )> }
 );
 
-export type HomePagePostsQueryVariables = {};
+export type HomePagePostsQueryVariables = {
+  limit?: Maybe<Scalars['Int']>,
+  offset?: Maybe<Scalars['Int']>
+};
 
 
 export type HomePagePostsQuery = (
@@ -262,8 +270,8 @@ export const PostPageQueryDocument = gql`
     
   }
 export const HomePagePostsDocument = gql`
-    query homePagePosts {
-  getPosts {
+    query homePagePosts($limit: Int, $offset: Int) {
+  getPosts(limit: $limit, offset: $offset) {
     id
     body
     created

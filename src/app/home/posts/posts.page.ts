@@ -1,8 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { Apollo } from 'apollo-angular';
-import { ApolloQueryResult } from 'apollo-client';
-import { FetchResult } from 'apollo-link';
+import { Apollo, QueryRef } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { Subscription } from 'rxjs';
 import { AddPostMutation, HomePagePostsQuery } from 'src/generated/graphql';
@@ -16,8 +14,8 @@ import { AddPostComponent } from './add-post/add-post.component';
 })
 export class PostsPage implements OnInit, OnDestroy {
   readonly HOME_PAGE_POSTS_QUERY = gql`
-    query homePagePosts {
-      getPosts {
+    query homePagePosts($limit: Int, $offset: Int) {
+      getPosts(limit: $limit, offset: $offset) {
         id
         body
         created
@@ -52,20 +50,24 @@ export class PostsPage implements OnInit, OnDestroy {
 
   posts = [{ id: '1', body: 'asd', created: Date.now(), user: null }];
   isLoading = true;
+  limit = 10;
+  offset = 0;
 
   private querySubscription: Subscription;
+  postsQuery: QueryRef<HomePagePostsQuery>;
 
   constructor(private modalCtrl: ModalController, private apollo: Apollo) {}
 
   ngOnInit() {
-    this.querySubscription = this.apollo
-      .watchQuery({
-        query: this.HOME_PAGE_POSTS_QUERY,
-      })
-      .valueChanges.subscribe(({ data, loading }: ApolloQueryResult<HomePagePostsQuery>) => {
-        this.posts = data.getPosts;
-        this.isLoading = loading;
-      });
+    this.postsQuery = this.apollo.watchQuery<HomePagePostsQuery>({
+      query: this.HOME_PAGE_POSTS_QUERY,
+      variables: { offset: this.offset, limit: this.limit },
+    });
+
+    this.querySubscription = this.postsQuery.valueChanges.subscribe(({ data, loading }) => {
+      this.posts = data.getPosts;
+      this.isLoading = loading;
+    });
   }
 
   onAddPost() {
@@ -78,10 +80,10 @@ export class PostsPage implements OnInit, OnDestroy {
         console.log(role);
         if (role === 'add') {
           this.apollo
-            .mutate({
+            .mutate<AddPostMutation>({
               mutation: this.CREATE_POST_MUTATION,
               variables: data,
-              update: (proxy, { data: { createPost } }: FetchResult<AddPostMutation>) => {
+              update: (proxy, { data: { createPost } }) => {
                 // Read the data from our cache for this query.
                 const postsInCache = proxy.readQuery<HomePagePostsQuery>({
                   query: this.HOME_PAGE_POSTS_QUERY,
@@ -98,7 +100,7 @@ export class PostsPage implements OnInit, OnDestroy {
               },
             })
             .subscribe(
-              (res: ApolloQueryResult<AddPostMutation>) => {
+              (res) => {
                 console.log(`Created`, res);
               },
               (errorResp) => {
@@ -109,6 +111,27 @@ export class PostsPage implements OnInit, OnDestroy {
       });
       modalEl.present();
     });
+  }
+
+  loadData(event) {
+    console.log('event', event);
+    this.offset += this.limit;
+
+    this.postsQuery
+      .fetchMore({
+        variables: { offset: this.offset },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) {
+            return prev;
+          }
+          return Object.assign({}, prev, {
+            getPosts: [...prev.getPosts, ...fetchMoreResult.getPosts],
+          });
+        },
+      })
+      .then((res) => {
+        event.target.disabled = true;
+      });
   }
 
   ngOnDestroy(): void {
