@@ -27,12 +27,8 @@
     <ion-item lines="none">
       <ion-button fill="clear">
         <ion-icon slot="icon-only" name="heart-empty"></ion-icon>
-        2
+        {{ post.likes }}
       </ion-button>
     </ion-item>
   </div>
-  <ion-button *ngIf="false" fill="clear">
-    Show Thread
-    <ion-icon slot="start" name="add"></ion-icon>
-  </ion-button>
 </ion-card>

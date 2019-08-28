@@ -21,6 +21,7 @@ export class PostsPage implements OnInit, OnDestroy {
         id
         body
         created
+        likes
         user {
           id
           username
@@ -37,6 +38,7 @@ export class PostsPage implements OnInit, OnDestroy {
         id
         body
         created
+        likes
         user {
           id
           username

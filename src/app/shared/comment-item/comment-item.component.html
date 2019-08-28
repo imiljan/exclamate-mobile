@@ -1,0 +1,16 @@
+<ion-card style="margin: 8px">
+  <ion-item>
+    <ion-avatar slot="start">
+      <ion-img [src]="'https://placekitten.com/100/100'"></ion-img>
+    </ion-avatar>
+    <ion-card-title>
+      {{ comment.user.firstName }} {{ comment.user.lastName }}
+      <span class="title-appendix">@{{ comment.user.username }} - </span>
+      <span class="title-appendix">22h</span>
+    </ion-card-title>
+  </ion-item>
+  <ion-card-content>
+    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Perferendis sunt corporis
+    {{ comment.body }}
+  </ion-card-content>
+</ion-card>

@@ -5,11 +5,11 @@
 }
 
 .icons:first-child {
-  margin-left: 20px;
+  margin-left: 24px;
 }
 
 .icons:last-child {
-  margin-right: 20px;
+  margin-right: 24px;
 }
 
 .post-header {
@@ -25,4 +25,10 @@
   margin-top: 0;
   font-size: 12px;
   font-style: italic;
+}
+
+ion-spinner {
+  height: 40%;
+  display: block;
+  margin: auto;
 }

@@ -1,222 +1,313 @@
+import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
-import gql from 'graphql-tag';
-
 export type Maybe<T> = T | null;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
+  ID: string,
+  String: string,
+  Boolean: boolean,
+  Int: number,
+  Float: number,
   /** Date custom scalar type */
-  Date: any;
+  Date: any,
 };
+
+
+
+export type Comment = {
+  __typename?: 'Comment',
+  id: Scalars['ID'],
+  body: Scalars['String'],
+  created: Scalars['Date'],
+  user: User,
+};
+
 
 export type Mutation = {
-  __typename?: 'Mutation';
-  _?: Maybe<Scalars['Boolean']>;
-  register: RegisterResponse;
-  createPost: Post;
+  __typename?: 'Mutation',
+  _?: Maybe<Scalars['Boolean']>,
+  register: RegisterResponse,
+  createPost: Post,
 };
+
 
 export type MutationRegisterArgs = {
-  userData?: Maybe<RegisterInput>;
+  userData?: Maybe<RegisterInput>
 };
 
+
 export type MutationCreatePostArgs = {
-  body: Scalars['String'];
+  body: Scalars['String']
 };
 
 export type Post = {
-  __typename?: 'Post';
-  id: Scalars['ID'];
-  body: Scalars['String'];
-  created: Scalars['Date'];
-  user: User;
+  __typename?: 'Post',
+  id: Scalars['ID'],
+  body: Scalars['String'],
+  created: Scalars['Date'],
+  user: User,
+  comments: Array<Maybe<Comment>>,
+  likes: Scalars['Int'],
 };
 
 export type Query = {
-  __typename?: 'Query';
-  _?: Maybe<Scalars['Boolean']>;
-  hello: Scalars['String'];
-  login: Token;
-  me: User;
-  getPost?: Maybe<Post>;
-  getPosts: Array<Maybe<Post>>;
+  __typename?: 'Query',
+  _?: Maybe<Scalars['Boolean']>,
+  hello: Scalars['String'],
+  login: Token,
+  me: User,
+  getPost?: Maybe<Post>,
+  getPosts: Array<Maybe<Post>>,
 };
+
 
 export type QueryLoginArgs = {
-  username: Scalars['String'];
-  password: Scalars['String'];
+  username: Scalars['String'],
+  password: Scalars['String']
 };
 
+
 export type QueryGetPostArgs = {
-  id: Scalars['ID'];
+  id: Scalars['ID']
 };
 
 export type RegisterInput = {
-  username: Scalars['String'];
-  password: Scalars['String'];
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
-  email: Scalars['String'];
+  username: Scalars['String'],
+  password: Scalars['String'],
+  firstName: Scalars['String'],
+  lastName: Scalars['String'],
+  email: Scalars['String'],
 };
 
 export type RegisterResponse = {
-  __typename?: 'RegisterResponse';
-  user?: Maybe<User>;
-  token?: Maybe<Scalars['String']>;
+  __typename?: 'RegisterResponse',
+  user?: Maybe<User>,
+  token?: Maybe<Scalars['String']>,
 };
 
 export type Token = {
-  __typename?: 'Token';
-  token: Scalars['String'];
+  __typename?: 'Token',
+  token: Scalars['String'],
 };
 
 export type User = {
-  __typename?: 'User';
-  id: Scalars['ID'];
-  username: Scalars['String'];
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
-  email: Scalars['String'];
-  posts?: Maybe<Array<Post>>;
+  __typename?: 'User',
+  id: Scalars['ID'],
+  username: Scalars['String'],
+  firstName: Scalars['String'],
+  lastName: Scalars['String'],
+  email: Scalars['String'],
+  posts?: Maybe<Array<Post>>,
 };
 export type LoginUserQueryVariables = {
-  username: Scalars['String'];
-  password: Scalars['String'];
+  username: Scalars['String'],
+  password: Scalars['String']
 };
 
-export type LoginUserQuery = { __typename?: 'Query' } & {
-  login: { __typename?: 'Token' } & Pick<Token, 'token'>;
-};
+
+export type LoginUserQuery = (
+  { __typename?: 'Query' }
+  & { login: (
+    { __typename?: 'Token' }
+    & Pick<Token, 'token'>
+  ) }
+);
 
 export type RegisterUserMutationVariables = {
-  input: RegisterInput;
+  input: RegisterInput
 };
 
-export type RegisterUserMutation = { __typename?: 'Mutation' } & {
-  register: { __typename?: 'RegisterResponse' } & Pick<RegisterResponse, 'token'> & {
-      user: Maybe<
-        { __typename?: 'User' } & Pick<User, 'id' | 'username' | 'lastName' | 'firstName' | 'email'>
-      >;
-    };
+
+export type RegisterUserMutation = (
+  { __typename?: 'Mutation' }
+  & { register: (
+    { __typename?: 'RegisterResponse' }
+    & Pick<RegisterResponse, 'token'>
+    & { user: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'lastName' | 'firstName' | 'email'>
+    )> }
+  ) }
+);
+
+export type PostPageQueryQueryVariables = {
+  id: Scalars['ID']
 };
+
+
+export type PostPageQueryQuery = (
+  { __typename?: 'Query' }
+  & { getPost: Maybe<(
+    { __typename?: 'Post' }
+    & Pick<Post, 'id' | 'body' | 'created' | 'likes'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'firstName' | 'lastName' | 'email'>
+    ), comments: Array<Maybe<(
+      { __typename?: 'Comment' }
+      & Pick<Comment, 'id' | 'body' | 'created'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username' | 'email' | 'firstName' | 'lastName'>
+      ) }
+    )>> }
+  )> }
+);
 
 export type HomePagePostsQueryVariables = {};
 
-export type HomePagePostsQuery = { __typename?: 'Query' } & {
-  getPosts: Array<
-    Maybe<
-      { __typename?: 'Post' } & Pick<Post, 'id' | 'body' | 'created'> & {
-          user: { __typename?: 'User' } & Pick<
-            User,
-            'id' | 'username' | 'firstName' | 'lastName' | 'email'
-          >;
-        }
-    >
-  >;
-};
+
+export type HomePagePostsQuery = (
+  { __typename?: 'Query' }
+  & { getPosts: Array<Maybe<(
+    { __typename?: 'Post' }
+    & Pick<Post, 'id' | 'body' | 'created' | 'likes'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'firstName' | 'lastName' | 'email'>
+    ) }
+  )>> }
+);
 
 export type AddPostMutationVariables = {
-  body: Scalars['String'];
+  body: Scalars['String']
 };
 
-export type AddPostMutation = { __typename?: 'Mutation' } & {
-  createPost: { __typename?: 'Post' } & Pick<Post, 'id' | 'body' | 'created'> & {
-      user: { __typename?: 'User' } & Pick<
-        User,
-        'id' | 'username' | 'firstName' | 'lastName' | 'email'
-      >;
-    };
-};
+
+export type AddPostMutation = (
+  { __typename?: 'Mutation' }
+  & { createPost: (
+    { __typename?: 'Post' }
+    & Pick<Post, 'id' | 'body' | 'created' | 'likes'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'firstName' | 'lastName' | 'email'>
+    ) }
+  ) }
+);
 
 export const LoginUserDocument = gql`
-  query LoginUser($username: String!, $password: String!) {
-    login(username: $username, password: $password) {
-      token
-    }
+    query LoginUser($username: String!, $password: String!) {
+  login(username: $username, password: $password) {
+    token
   }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class LoginUserGQL extends Apollo.Query<LoginUserQuery, LoginUserQueryVariables> {
-  document = LoginUserDocument;
 }
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class LoginUserGQL extends Apollo.Query<LoginUserQuery, LoginUserQueryVariables> {
+    document = LoginUserDocument;
+    
+  }
 export const RegisterUserDocument = gql`
-  mutation RegisterUser($input: RegisterInput!) {
-    register(userData: $input) {
+    mutation RegisterUser($input: RegisterInput!) {
+  register(userData: $input) {
+    user {
+      id
+      username
+      lastName
+      firstName
+      email
+    }
+    token
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class RegisterUserGQL extends Apollo.Mutation<RegisterUserMutation, RegisterUserMutationVariables> {
+    document = RegisterUserDocument;
+    
+  }
+export const PostPageQueryDocument = gql`
+    query PostPageQuery($id: ID!) {
+  getPost(id: $id) {
+    id
+    body
+    created
+    likes
+    user {
+      id
+      username
+      firstName
+      lastName
+      email
+    }
+    comments {
+      id
+      body
+      created
       user {
         id
         username
-        lastName
-        firstName
         email
+        firstName
+        lastName
       }
-      token
     }
   }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class RegisterUserGQL extends Apollo.Mutation<
-  RegisterUserMutation,
-  RegisterUserMutationVariables
-> {
-  document = RegisterUserDocument;
 }
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class PostPageQueryGQL extends Apollo.Query<PostPageQueryQuery, PostPageQueryQueryVariables> {
+    document = PostPageQueryDocument;
+    
+  }
 export const HomePagePostsDocument = gql`
-  query homePagePosts {
-    getPosts {
+    query homePagePosts {
+  getPosts {
+    id
+    body
+    created
+    likes
+    user {
       id
-      body
-      created
-      user {
-        id
-        username
-        firstName
-        lastName
-        email
-      }
+      username
+      firstName
+      lastName
+      email
     }
   }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class HomePagePostsGQL extends Apollo.Query<
-  HomePagePostsQuery,
-  HomePagePostsQueryVariables
-> {
-  document = HomePagePostsDocument;
 }
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class HomePagePostsGQL extends Apollo.Query<HomePagePostsQuery, HomePagePostsQueryVariables> {
+    document = HomePagePostsDocument;
+    
+  }
 export const AddPostDocument = gql`
-  mutation addPost($body: String!) {
-    createPost(body: $body) {
+    mutation addPost($body: String!) {
+  createPost(body: $body) {
+    id
+    body
+    created
+    likes
+    user {
       id
-      body
-      created
-      user {
-        id
-        username
-        firstName
-        lastName
-        email
-      }
+      username
+      firstName
+      lastName
+      email
     }
   }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class AddPostGQL extends Apollo.Mutation<AddPostMutation, AddPostMutationVariables> {
-  document = AddPostDocument;
 }
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class AddPostGQL extends Apollo.Mutation<AddPostMutation, AddPostMutationVariables> {
+    document = AddPostDocument;
+    
+  }

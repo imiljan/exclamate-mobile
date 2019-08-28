@@ -15,6 +15,6 @@ export class PostItemComponent implements OnInit {
   ngOnInit() {}
 
   openPost() {
-    this.router.navigate(['home', 'tabs', 'posts', '123']);
+    this.router.navigate(['home', 'tabs', 'posts', this.post.id]);
   }
 }
