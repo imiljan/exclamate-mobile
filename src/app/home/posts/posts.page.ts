@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { IonVirtualScroll, ModalController } from '@ionic/angular';
 import { Apollo, QueryRef } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { Subscription } from 'rxjs';
@@ -15,7 +15,7 @@ import { AddPostComponent } from './add-post/add-post.component';
 export class PostsPage implements OnInit, OnDestroy {
   readonly HOME_PAGE_POSTS_QUERY = gql`
     query homePagePosts($limit: Int, $offset: Int) {
-      getPosts(limit: $limit, offset: $offset) {
+      getPosts(limit: $limit, offset: $offset) @connection(key: "getPosts") {
         id
         body
         created
@@ -52,6 +52,7 @@ export class PostsPage implements OnInit, OnDestroy {
   isLoading = true;
   limit = 10;
   offset = 0;
+  @ViewChild(IonVirtualScroll, { static: false }) virtualScroll: IonVirtualScroll;
 
   private querySubscription: Subscription;
   postsQuery: QueryRef<HomePagePostsQuery>;
@@ -87,15 +88,16 @@ export class PostsPage implements OnInit, OnDestroy {
                 // Read the data from our cache for this query.
                 const postsInCache = proxy.readQuery<HomePagePostsQuery>({
                   query: this.HOME_PAGE_POSTS_QUERY,
+                  variables: { limit: 10, offset: 0 },
                 });
 
-                // Add our todo from the mutation to the end.
+                // Add our todo from the mutation to the start.
                 postsInCache.getPosts.unshift(createPost);
 
                 // Write our data back to the cache.
                 proxy.writeQuery({
                   query: this.HOME_PAGE_POSTS_QUERY,
-                  data,
+                  data: postsInCache,
                 });
               },
             })
@@ -130,7 +132,11 @@ export class PostsPage implements OnInit, OnDestroy {
         },
       })
       .then((res) => {
-        event.target.disabled = true;
+        if (res.data.getPosts.length === 0) {
+          event.target.disabled = true;
+        }
+        this.virtualScroll.checkEnd();
+        event.target.complete();
       });
   }
 

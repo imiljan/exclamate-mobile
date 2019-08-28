@@ -10,11 +10,11 @@
 <ion-content>
   <ion-spinner *ngIf="isLoading; else showPosts"></ion-spinner>
   <ng-template #showPosts>
-    <!-- <ion-virtual-scroll [items]="posts" approxItemHeight="195px"> -->
-    <!-- <div *virtualItem="let post"> -->
-    <app-post-item *ngFor="let post of posts" [post]="post"></app-post-item>
-    <!-- </div> -->
-    <!-- </ion-virtual-scroll> -->
+    <ion-virtual-scroll [items]="posts" approxItemHeight="180px">
+      <div *virtualItem="let post">
+        <app-post-item [post]="post"></app-post-item>
+      </div>
+    </ion-virtual-scroll>
     <ion-infinite-scroll threshold="25%" (ionInfinite)="loadData($event)">
       <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more posts...">
       </ion-infinite-scroll-content>
