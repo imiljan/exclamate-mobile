@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppState, Capacitor, Plugins } from '@capacitor/core';
 import { Platform } from '@ionic/angular';
+import { Apollo } from 'apollo-angular';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
@@ -21,7 +22,8 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private platform: Platform,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private apollo: Apollo
   ) {
     this.initializeApp();
   }
@@ -47,6 +49,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onLogout() {
     this.authService.logout();
+    this.apollo
+      .getClient()
+      .clearStore()
+      .then(() => console.log('Cache cleared', this.apollo.getClient().cache));
   }
 
   ngOnDestroy() {
