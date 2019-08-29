@@ -7,40 +7,43 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf="!isLoading">
   <ion-grid fixed style="border-bottom: 1px solid black">
     <ion-row>
       <ion-col size="3">
         <ion-avatar style="padding: 10px 0 0 10px;" no-margin>
-          <img src="https://placekitten.com/100/100" alt="user-avatar"/>
+          <img src="https://placekitten.com/100/100" alt="user-avatar" />
         </ion-avatar>
       </ion-col>
       <ion-col size="9">
         <div>
-          <h1 no-margin>Full Nameeee</h1>
-          <h2 no-margin>@username</h2>
+          <h1 no-margin>{{ user.firstName }} {{ user.lastName }}</h1>
+          <h2 no-margin>@{{ user.username }}</h2>
         </div>
       </ion-col>
     </ion-row>
     <p margin>
-      Founded in 1829 on an isthmus between Lake Monona and Lake Mendota.
+      TO BE ADDED ON USER MODEL AND TYPE Founded in 1829 on an isthmus between Lake Monona and Lake
+      Mendota.
     </p>
-    <div style="display: flex; justify-content: space-between; flex-direction: column; margin: 0; padding: 0">
+    <div
+      style="display: flex; justify-content: space-between; flex-direction: column; margin: 0; padding: 0"
+    >
       <small style="font-size: small; height: min-content; margin-left: 10px">
         <ion-icon name="home" size="small"></ion-icon>
-        TEST
+        TEST, add this to
       </small>
       <small style="font-size: small; height: min-content; margin-left: 10px">
         <ion-icon name="calendar" size="small"></ion-icon>
-        Joined {{ '2012-01-02' | date:'MMM y'}}
+        Joined {{ user.joinedDate | date: 'MMM y' }}
       </small>
       <ion-item lines="none" style="display: flex; justify-content: space-evenly;">
         <ion-label> 1234 Following</ion-label>
-        <br>
+        <br />
         <ion-label> 1234 Followers</ion-label>
       </ion-item>
     </div>
   </ion-grid>
   <ion-list-header> POSTS</ion-list-header>
-  <app-post-item *ngFor="let i of [1, 2, 3]" [temp]="i"></app-post-item>
+  <app-post-item *ngFor="let post of user.posts" [post]="post"></app-post-item>
 </ion-content>
