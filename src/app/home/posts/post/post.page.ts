@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { Subscription } from 'rxjs';
-import { Post, PostPageQueryQuery } from 'src/generated/graphql';
+import { CommentMutation, Post, PostPageQueryQuery } from 'src/generated/graphql';
 
 @Component({
   selector: 'app-post',
@@ -40,9 +40,26 @@ export class PostPage implements OnInit, OnDestroy {
       }
     }
   `;
+  readonly COMMENT_MUTATION = gql`
+    mutation Comment($postId: Int!, $body: String!) {
+      createComment(postId: $postId, body: $body) {
+        id
+        body
+        created
+        user {
+          id
+          username
+          email
+          firstName
+          lastName
+        }
+      }
+    }
+  `;
 
   post: Post;
   isLoading = true;
+  comment = '';
 
   private querySubscription: Subscription;
 
@@ -64,6 +81,35 @@ export class PostPage implements OnInit, OnDestroy {
           this.isLoading = loading;
         });
     });
+  }
+
+  onComment() {
+    console.log(this.comment);
+    this.apollo
+      .mutate<CommentMutation>({
+        mutation: this.COMMENT_MUTATION,
+        variables: { postId: +this.post.id, body: this.comment },
+        update: (proxy, { data: { createComment } }) => {
+          // Read the data from our cache for this query.
+          const postInCache = proxy.readQuery<PostPageQueryQuery>({
+            query: this.POST_QUERY,
+            variables: { id: this.post.id },
+          });
+
+          // Add our todo from the mutation to the start.
+          postInCache.getPost.comments.push(createComment);
+
+          // Write our data back to the cache.
+          proxy.writeQuery({
+            query: this.POST_QUERY,
+            data: postInCache,
+          });
+        },
+      })
+      .subscribe((res) => {
+        console.log(`created`, res);
+      });
+    this.comment = '';
   }
 
   ngOnDestroy() {

@@ -56,4 +56,20 @@
     </ion-item>
   </div>
   <app-comment-item *ngFor="let comment of post.comments" [comment]="comment"></app-comment-item>
+  <ion-item class="comment-form">
+    <ion-input
+      placeholder="Comment..."
+      name="comment"
+      [value]="comment"
+      (input)="comment = $event.target.value"
+    ></ion-input>
+    <ion-button
+      class="btn-comment"
+      slot="end"
+      [disabled]="comment.length == 0"
+      (click)="onComment()"
+    >
+      Comment
+    </ion-button>
+  </ion-item>
 </ion-content>

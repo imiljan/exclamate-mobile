@@ -29,6 +29,7 @@ export type Mutation = {
   _?: Maybe<Scalars['Boolean']>,
   register: RegisterResponse,
   createPost: Post,
+  createComment: Comment,
 };
 
 
@@ -38,6 +39,12 @@ export type MutationRegisterArgs = {
 
 
 export type MutationCreatePostArgs = {
+  body: Scalars['String']
+};
+
+
+export type MutationCreateCommentArgs = {
+  postId: Scalars['Int'],
   body: Scalars['String']
 };
 
@@ -103,6 +110,7 @@ export type User = {
   firstName: Scalars['String'],
   lastName: Scalars['String'],
   email: Scalars['String'],
+  joinedDate?: Maybe<Scalars['Date']>,
   posts?: Maybe<Array<Maybe<Post>>>,
 };
 export type LoginUserQueryVariables = {
@@ -160,6 +168,24 @@ export type PostPageQueryQuery = (
   )> }
 );
 
+export type CommentMutationVariables = {
+  postId: Scalars['Int'],
+  body: Scalars['String']
+};
+
+
+export type CommentMutation = (
+  { __typename?: 'Mutation' }
+  & { createComment: (
+    { __typename?: 'Comment' }
+    & Pick<Comment, 'id' | 'body' | 'created'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'email' | 'firstName' | 'lastName'>
+    ) }
+  ) }
+);
+
 export type HomePagePostsQueryVariables = {
   limit?: Maybe<Scalars['Int']>,
   offset?: Maybe<Scalars['Int']>
@@ -192,6 +218,21 @@ export type AddPostMutation = (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'username' | 'firstName' | 'lastName' | 'email'>
     ) }
+  ) }
+);
+
+export type ProfilePageQueryQueryVariables = {};
+
+
+export type ProfilePageQueryQuery = (
+  { __typename?: 'Query' }
+  & { me: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'username' | 'firstName' | 'lastName' | 'email' | 'joinedDate'>
+    & { posts: Maybe<Array<Maybe<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'body' | 'created' | 'likes'>
+    )>>> }
   ) }
 );
 
@@ -269,6 +310,30 @@ export const PostPageQueryDocument = gql`
     document = PostPageQueryDocument;
     
   }
+export const CommentDocument = gql`
+    mutation Comment($postId: Int!, $body: String!) {
+  createComment(postId: $postId, body: $body) {
+    id
+    body
+    created
+    user {
+      id
+      username
+      email
+      firstName
+      lastName
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CommentGQL extends Apollo.Mutation<CommentMutation, CommentMutationVariables> {
+    document = CommentDocument;
+    
+  }
 export const HomePagePostsDocument = gql`
     query homePagePosts($limit: Int, $offset: Int) {
   getPosts(limit: $limit, offset: $offset) @connection(key: "getPosts") {
@@ -317,5 +382,31 @@ export const AddPostDocument = gql`
   })
   export class AddPostGQL extends Apollo.Mutation<AddPostMutation, AddPostMutationVariables> {
     document = AddPostDocument;
+    
+  }
+export const ProfilePageQueryDocument = gql`
+    query ProfilePageQuery {
+  me {
+    id
+    username
+    firstName
+    lastName
+    email
+    joinedDate
+    posts {
+      id
+      body
+      created
+      likes
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ProfilePageQueryGQL extends Apollo.Query<ProfilePageQueryQuery, ProfilePageQueryQueryVariables> {
+    document = ProfilePageQueryDocument;
     
   }

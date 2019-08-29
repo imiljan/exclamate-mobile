@@ -32,3 +32,25 @@ ion-spinner {
   display: block;
   margin: auto;
 }
+
+.comment-form {
+  position: fixed;
+  bottom: 0;
+  width: 96%;
+  margin-left: 2%;
+  border-radius: 20px !important;
+  font-size: 0.9em;
+  margin-bottom: 10px;
+  border: 1px solid var(--ion-color-primary);
+}
+
+.btn-comment {
+  position: absolute;
+  right: 10px;
+  bottom: 7px;
+  z-index: 9999;
+}
+
+:host {
+  padding-bottom: 60px;
+}
