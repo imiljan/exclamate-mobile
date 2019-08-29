@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { IonVirtualScroll, ModalController } from '@ionic/angular';
+import { IonInfiniteScroll, IonVirtualScroll, ModalController } from '@ionic/angular';
 import { Apollo, QueryRef } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { Subscription } from 'rxjs';
@@ -53,6 +53,7 @@ export class PostsPage implements OnInit, OnDestroy {
   limit = 10;
   offset = 0;
   @ViewChild(IonVirtualScroll, { static: false }) virtualScroll: IonVirtualScroll;
+  @ViewChild(IonInfiniteScroll, { static: false }) infiniteScroll: IonInfiniteScroll;
 
   private querySubscription: Subscription;
   postsQuery: QueryRef<HomePagePostsQuery>;
@@ -112,6 +113,14 @@ export class PostsPage implements OnInit, OnDestroy {
         }
       });
       modalEl.present();
+    });
+  }
+
+  doRefresh(event) {
+    this.postsQuery.refetch().then((res) => {
+      this.infiniteScroll.disabled = false;
+      this.offset = 0;
+      event.target.complete();
     });
   }
 

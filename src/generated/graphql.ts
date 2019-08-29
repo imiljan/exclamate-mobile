@@ -103,7 +103,7 @@ export type User = {
   firstName: Scalars['String'],
   lastName: Scalars['String'],
   email: Scalars['String'],
-  posts?: Maybe<Array<Post>>,
+  posts?: Maybe<Array<Maybe<Post>>>,
 };
 export type LoginUserQueryVariables = {
   username: Scalars['String'],
@@ -271,7 +271,7 @@ export const PostPageQueryDocument = gql`
   }
 export const HomePagePostsDocument = gql`
     query homePagePosts($limit: Int, $offset: Int) {
-  getPosts(limit: $limit, offset: $offset) {
+  getPosts(limit: $limit, offset: $offset) @connection(key: "getPosts") {
     id
     body
     created

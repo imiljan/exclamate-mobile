@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Apollo } from 'apollo-angular';
-import { ApolloQueryResult } from 'apollo-client';
 import gql from 'graphql-tag';
 import { Subscription } from 'rxjs';
 import { Post, PostPageQueryQuery } from 'src/generated/graphql';
@@ -56,13 +55,12 @@ export class PostPage implements OnInit, OnDestroy {
       }
       console.log('paramMap', paramMap.get('postId'));
       this.querySubscription = this.apollo
-        .query({
+        .query<PostPageQueryQuery>({
           query: this.POST_QUERY,
           variables: { id: paramMap.get('postId') },
         })
-        .subscribe(({ data, loading }: ApolloQueryResult<PostPageQueryQuery>) => {
+        .subscribe(({ data, loading }) => {
           this.post = data.getPost;
-          console.log('this.post', this.post);
           this.isLoading = loading;
         });
     });

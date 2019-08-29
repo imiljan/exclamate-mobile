@@ -10,6 +10,15 @@
 <ion-content>
   <ion-spinner *ngIf="isLoading; else showPosts"></ion-spinner>
   <ng-template #showPosts>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content
+        pullingIcon="arrow-dropdown"
+        pullingText="Pull to refresh"
+        refreshingSpinner="circles"
+        refreshingText="Refreshing..."
+      >
+      </ion-refresher-content>
+    </ion-refresher>
     <ion-virtual-scroll [items]="posts" approxItemHeight="180px">
       <div *virtualItem="let post">
         <app-post-item [post]="post"></app-post-item>
