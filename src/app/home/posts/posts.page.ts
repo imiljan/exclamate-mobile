@@ -3,7 +3,12 @@ import { IonInfiniteScroll, IonVirtualScroll, ModalController } from '@ionic/ang
 import { Apollo, QueryRef } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { Subscription } from 'rxjs';
-import { AddPostMutation, HomePagePostsQuery } from 'src/generated/graphql';
+import {
+  AddPostMutation,
+  AddPostMutationVariables,
+  HomePagePostsQuery,
+  HomePagePostsQueryVariables,
+} from 'src/generated/graphql';
 
 import { AddPostComponent } from './add-post/add-post.component';
 
@@ -61,7 +66,7 @@ export class PostsPage implements OnInit, OnDestroy {
   constructor(private modalCtrl: ModalController, private apollo: Apollo) {}
 
   ngOnInit() {
-    this.postsQuery = this.apollo.watchQuery<HomePagePostsQuery>({
+    this.postsQuery = this.apollo.watchQuery<HomePagePostsQuery, HomePagePostsQueryVariables>({
       query: this.HOME_PAGE_POSTS_QUERY,
       variables: { offset: this.offset, limit: this.limit },
     });
@@ -82,12 +87,15 @@ export class PostsPage implements OnInit, OnDestroy {
         console.log(role);
         if (role === 'add') {
           this.apollo
-            .mutate<AddPostMutation>({
+            .mutate<AddPostMutation, AddPostMutationVariables>({
               mutation: this.CREATE_POST_MUTATION,
               variables: data,
               update: (proxy, { data: { createPost } }) => {
                 // Read the data from our cache for this query.
-                const postsInCache = proxy.readQuery<HomePagePostsQuery>({
+                const postsInCache = proxy.readQuery<
+                  HomePagePostsQuery,
+                  HomePagePostsQueryVariables
+                >({
                   query: this.HOME_PAGE_POSTS_QUERY,
                   variables: { limit: 10, offset: 0 },
                 });

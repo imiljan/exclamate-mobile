@@ -40,10 +40,8 @@ export class RegisterPage implements OnInit {
       loadingEl.present();
       this.authService.register(username, password, email, firstName, lastName).subscribe(
         (res) => {
-          if (!res.loading) {
-            loadingEl.dismiss();
-            this.router.navigateByUrl('/home');
-          }
+          loadingEl.dismiss();
+          this.router.navigateByUrl('/home');
         },
         (errorResp) => {
           console.log('registration error resp', errorResp);

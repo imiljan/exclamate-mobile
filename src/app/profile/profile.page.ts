@@ -3,7 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { Subscription } from 'rxjs';
-import { MyProfilePageQueryQuery, User, UserProfilePageQueryQuery } from 'src/generated/graphql';
+import {
+  MyProfilePageQueryQuery,
+  User,
+  UserProfilePageQueryQuery,
+  UserProfilePageQueryQueryVariables,
+} from 'src/generated/graphql';
 
 @Component({
   selector: 'app-profile',
@@ -69,7 +74,7 @@ export class ProfilePage implements OnInit, OnDestroy {
       console.log(paramMap.get('userId'));
       if (paramMap.has('userId')) {
         this.querySubscription = this.apollo
-          .query<UserProfilePageQueryQuery>({
+          .query<UserProfilePageQueryQuery, UserProfilePageQueryQueryVariables>({
             query: this.USER_PROFILE_QUERY,
             variables: { id: +paramMap.get('userId') },
           })

@@ -3,7 +3,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { Subscription } from 'rxjs';
-import { CommentMutation, Post, PostPageQueryQuery } from 'src/generated/graphql';
+import {
+  CommentMutation,
+  CommentMutationVariables,
+  Post,
+  PostPageQueryQuery,
+  PostPageQueryQueryVariables,
+} from 'src/generated/graphql';
 
 @Component({
   selector: 'app-post',
@@ -72,7 +78,7 @@ export class PostPage implements OnInit, OnDestroy {
       }
       console.log('paramMap', paramMap.get('postId'));
       this.querySubscription = this.apollo
-        .query<PostPageQueryQuery>({
+        .query<PostPageQueryQuery, PostPageQueryQueryVariables>({
           query: this.POST_QUERY,
           variables: { id: paramMap.get('postId') },
         })
@@ -86,12 +92,12 @@ export class PostPage implements OnInit, OnDestroy {
   onComment() {
     console.log(this.comment);
     this.apollo
-      .mutate<CommentMutation>({
+      .mutate<CommentMutation, CommentMutationVariables>({
         mutation: this.COMMENT_MUTATION,
         variables: { postId: +this.post.id, body: this.comment },
         update: (proxy, { data: { createComment } }) => {
           // Read the data from our cache for this query.
-          const postInCache = proxy.readQuery<PostPageQueryQuery>({
+          const postInCache = proxy.readQuery<PostPageQueryQuery, PostPageQueryQueryVariables>({
             query: this.POST_QUERY,
             variables: { id: this.post.id },
           });

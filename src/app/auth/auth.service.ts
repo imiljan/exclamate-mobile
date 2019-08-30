@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Plugins } from '@capacitor/core';
 import { Apollo } from 'apollo-angular';
-import { ApolloQueryResult } from 'apollo-client';
 import gql from 'graphql-tag';
 import { BehaviorSubject, from } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-
-import { User } from './user.model';
+import {
+  LoginUserQuery,
+  LoginUserQueryVariables,
+  RegisterUserMutation,
+  RegisterUserMutationVariables,
+} from 'src/generated/graphql';
 
 const { Storage } = Plugins;
 
@@ -36,7 +39,7 @@ export class AuthService {
 
   login(username: string, password: string) {
     return this.apollo
-      .query({
+      .query<LoginUserQuery, LoginUserQueryVariables>({
         query: gql`
           query LoginUser($username: String!, $password: String!) {
             login(username: $username, password: $password) {
@@ -50,7 +53,7 @@ export class AuthService {
         },
       })
       .pipe(
-        tap((res: ApolloQueryResult<{ login: { token: string } }>) => {
+        tap((res) => {
           this.setUserData(res.data.login.token);
         })
       );
@@ -63,7 +66,7 @@ export class AuthService {
 
   register(username: string, password: string, email: string, firstName: string, lastName: string) {
     return this.apollo
-      .mutate({
+      .mutate<RegisterUserMutation, RegisterUserMutationVariables>({
         mutation: gql`
           mutation RegisterUser($input: RegisterInput!) {
             register(userData: $input) {
@@ -89,7 +92,7 @@ export class AuthService {
         },
       })
       .pipe(
-        tap((res: ApolloQueryResult<{ register: { user: User; token: string } }>) => {
+        tap((res) => {
           this.setUserData(res.data.register.token);
         })
       );
