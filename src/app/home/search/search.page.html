@@ -3,16 +3,20 @@
     <ion-buttons slot="start">
       <ion-menu-button side="start" type="overlay"></ion-menu-button>
     </ion-buttons>
-    <ion-searchbar mode="ios"
-                   placeholder="Search"
-                   (ionChange)="onSearchChange($event)"
-                   [debounce]="500"
-                   animated
-                   autocomplete="on"
+    <ion-searchbar
+      mode="ios"
+      placeholder="Search"
+      (ionChange)="onSearchChange($event)"
+      [debounce]="800"
+      animated
+      autocomplete="on"
     ></ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <app-post-item *ngFor="let i of [1, 2, 3]" [temp]="i"></app-post-item>
+  <ion-spinner *ngIf="isLoading; else showPosts"></ion-spinner>
+  <ng-template #showPosts>
+    <app-post-item *ngFor="let post of posts" [post]="post"></app-post-item>
+  </ng-template>
 </ion-content>
