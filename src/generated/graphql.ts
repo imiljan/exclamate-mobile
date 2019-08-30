@@ -111,7 +111,11 @@ export type User = {
   lastName: Scalars['String'],
   email: Scalars['String'],
   joinedDate?: Maybe<Scalars['Date']>,
+  location?: Maybe<Scalars['String']>,
+  bio?: Maybe<Scalars['String']>,
   posts?: Maybe<Array<Maybe<Post>>>,
+  following?: Maybe<Scalars['Int']>,
+  followers?: Maybe<Scalars['Int']>,
 };
 export type LoginUserQueryVariables = {
   username: Scalars['String'],
@@ -228,7 +232,7 @@ export type ProfilePageQueryQuery = (
   { __typename?: 'Query' }
   & { me: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'firstName' | 'lastName' | 'email' | 'joinedDate'>
+    & Pick<User, 'id' | 'username' | 'firstName' | 'lastName' | 'email' | 'bio' | 'location' | 'joinedDate' | 'followers' | 'following'>
     & { posts: Maybe<Array<Maybe<(
       { __typename?: 'Post' }
       & Pick<Post, 'id' | 'body' | 'created' | 'likes'>
@@ -392,7 +396,11 @@ export const ProfilePageQueryDocument = gql`
     firstName
     lastName
     email
+    bio
+    location
     joinedDate
+    followers
+    following
     posts {
       id
       body

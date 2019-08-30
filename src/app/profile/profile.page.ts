@@ -18,7 +18,11 @@ export class ProfilePage implements OnInit, OnDestroy {
         firstName
         lastName
         email
+        bio
+        location
         joinedDate
+        followers
+        following
         posts {
           id
           body

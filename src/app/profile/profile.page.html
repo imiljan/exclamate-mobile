@@ -23,24 +23,23 @@
       </ion-col>
     </ion-row>
     <p margin>
-      TO BE ADDED ON USER MODEL AND TYPE Founded in 1829 on an isthmus between Lake Monona and Lake
-      Mendota.
+      {{ user.bio }}
     </p>
     <div
       style="display: flex; justify-content: space-between; flex-direction: column; margin: 0; padding: 0"
     >
       <small style="font-size: small; height: min-content; margin-left: 10px">
         <ion-icon name="home" size="small"></ion-icon>
-        TEST, add this to
+        {{ user.location }}
       </small>
       <small style="font-size: small; height: min-content; margin-left: 10px">
         <ion-icon name="calendar" size="small"></ion-icon>
         Joined {{ user.joinedDate | date: 'MMM y' }}
       </small>
       <ion-item lines="none" style="display: flex; justify-content: space-evenly;">
-        <ion-label> 1234 Following</ion-label>
+        <ion-label> {{ user.following }} Following</ion-label>
         <br />
-        <ion-label> 1234 Followers</ion-label>
+        <ion-label> {{ user.followers }} Followers</ion-label>
       </ion-item>
     </div>
   </ion-grid>
