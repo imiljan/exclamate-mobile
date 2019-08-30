@@ -48,7 +48,7 @@ export class PostsPage implements OnInit, OnDestroy {
     }
   `;
 
-  posts = [{ id: '1', body: 'asd', created: Date.now(), user: null }];
+  posts = [];
   isLoading = true;
   limit = 10;
   offset = 0;

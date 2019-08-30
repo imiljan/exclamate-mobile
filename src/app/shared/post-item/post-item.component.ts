@@ -17,4 +17,8 @@ export class PostItemComponent implements OnInit {
   openPost() {
     this.router.navigate(['home', 'tabs', 'posts', this.post.id]);
   }
+
+  openUserPage() {
+    this.router.navigate(['profile', this.post.user.id]);
+  }
 }

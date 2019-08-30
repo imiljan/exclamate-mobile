@@ -63,6 +63,7 @@ export type Query = {
   _?: Maybe<Scalars['Boolean']>,
   login: Token,
   me: User,
+  getUser?: Maybe<User>,
   getPost?: Maybe<Post>,
   getPosts: Array<Maybe<Post>>,
 };
@@ -71,6 +72,11 @@ export type Query = {
 export type QueryLoginArgs = {
   username: Scalars['String'],
   password: Scalars['String']
+};
+
+
+export type QueryGetUserArgs = {
+  id: Scalars['Int']
 };
 
 
@@ -225,10 +231,10 @@ export type AddPostMutation = (
   ) }
 );
 
-export type ProfilePageQueryQueryVariables = {};
+export type MyProfilePageQueryQueryVariables = {};
 
 
-export type ProfilePageQueryQuery = (
+export type MyProfilePageQueryQuery = (
   { __typename?: 'Query' }
   & { me: (
     { __typename?: 'User' }
@@ -238,6 +244,23 @@ export type ProfilePageQueryQuery = (
       & Pick<Post, 'id' | 'body' | 'created' | 'likes'>
     )>>> }
   ) }
+);
+
+export type UserProfilePageQueryQueryVariables = {
+  id: Scalars['Int']
+};
+
+
+export type UserProfilePageQueryQuery = (
+  { __typename?: 'Query' }
+  & { getUser: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'username' | 'firstName' | 'lastName' | 'email' | 'bio' | 'location' | 'joinedDate' | 'followers' | 'following'>
+    & { posts: Maybe<Array<Maybe<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'body' | 'created' | 'likes'>
+    )>>> }
+  )> }
 );
 
 export const LoginUserDocument = gql`
@@ -388,8 +411,8 @@ export const AddPostDocument = gql`
     document = AddPostDocument;
     
   }
-export const ProfilePageQueryDocument = gql`
-    query ProfilePageQuery {
+export const MyProfilePageQueryDocument = gql`
+    query MyProfilePageQuery {
   me {
     id
     username
@@ -414,7 +437,37 @@ export const ProfilePageQueryDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class ProfilePageQueryGQL extends Apollo.Query<ProfilePageQueryQuery, ProfilePageQueryQueryVariables> {
-    document = ProfilePageQueryDocument;
+  export class MyProfilePageQueryGQL extends Apollo.Query<MyProfilePageQueryQuery, MyProfilePageQueryQueryVariables> {
+    document = MyProfilePageQueryDocument;
+    
+  }
+export const UserProfilePageQueryDocument = gql`
+    query UserProfilePageQuery($id: Int!) {
+  getUser(id: $id) {
+    id
+    username
+    firstName
+    lastName
+    email
+    bio
+    location
+    joinedDate
+    followers
+    following
+    posts {
+      id
+      body
+      created
+      likes
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UserProfilePageQueryGQL extends Apollo.Query<UserProfilePageQueryQuery, UserProfilePageQueryQueryVariables> {
+    document = UserProfilePageQueryDocument;
     
   }

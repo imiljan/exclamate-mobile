@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { Subscription } from 'rxjs';
-import { ProfilePageQueryQuery, User } from 'src/generated/graphql';
+import { MyProfilePageQueryQuery, User, UserProfilePageQueryQuery } from 'src/generated/graphql';
 
 @Component({
   selector: 'app-profile',
@@ -10,9 +11,32 @@ import { ProfilePageQueryQuery, User } from 'src/generated/graphql';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit, OnDestroy {
-  readonly PROFILE_QUERY = gql`
-    query ProfilePageQuery {
+  readonly MY_PROFILE_QUERY = gql`
+    query MyProfilePageQuery {
       me {
+        id
+        username
+        firstName
+        lastName
+        email
+        bio
+        location
+        joinedDate
+        followers
+        following
+        posts {
+          id
+          body
+          created
+          likes
+        }
+      }
+    }
+  `;
+
+  readonly USER_PROFILE_QUERY = gql`
+    query UserProfilePageQuery($id: Int!) {
+      getUser(id: $id) {
         id
         username
         firstName
@@ -38,19 +62,43 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   private querySubscription: Subscription;
 
-  constructor(private apollo: Apollo) {}
+  constructor(private apollo: Apollo, private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.querySubscription = this.apollo
-      .query<ProfilePageQueryQuery>({
-        query: this.PROFILE_QUERY,
-      })
-      .subscribe(({ data, loading }) => {
-        this.user = data.me;
-        this.isLoading = loading;
-        console.log(this.user.posts);
-        this.user.posts = this.user.posts.map((el) => ({ ...el, user: this.user, comments: [] }));
-      });
+    this.route.paramMap.subscribe((paramMap) => {
+      console.log(paramMap.get('userId'));
+      if (paramMap.has('userId')) {
+        this.querySubscription = this.apollo
+          .query<UserProfilePageQueryQuery>({
+            query: this.USER_PROFILE_QUERY,
+            variables: { id: +paramMap.get('userId') },
+          })
+          .subscribe(({ data, loading }) => {
+            this.user = data.getUser;
+            this.isLoading = loading;
+            this.user.posts = this.user.posts.map((el) => ({
+              ...el,
+              user: this.user,
+              comments: [],
+            }));
+          });
+      } else {
+        this.querySubscription = this.apollo
+          .query<MyProfilePageQueryQuery>({
+            query: this.MY_PROFILE_QUERY,
+          })
+          .subscribe(({ data, loading }) => {
+            this.user = data.me;
+            this.isLoading = loading;
+            console.log(this.user.posts);
+            this.user.posts = this.user.posts.map((el) => ({
+              ...el,
+              user: this.user,
+              comments: [],
+            }));
+          });
+      }
+    });
   }
 
   ngOnDestroy() {

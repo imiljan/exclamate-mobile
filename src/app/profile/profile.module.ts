@@ -3,13 +3,13 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
-import { ProfilePage } from './profile.page';
 import { SharedModule } from '../shared/shared.module';
+import { ProfilePage } from './profile.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: ProfilePage,
+    children: [{ path: '', component: ProfilePage }, { path: ':userId', component: ProfilePage }],
   },
 ];
 

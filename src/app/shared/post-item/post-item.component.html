@@ -3,7 +3,7 @@
     <ion-avatar slot="start">
       <ion-img [src]="'https://placekitten.com/100/100'"></ion-img>
     </ion-avatar>
-    <div class="post-header">
+    <div class="post-header" (click)="openUserPage()">
       <h4 class="post-username">{{ post.user.username }}</h4>
       <p class="post-date">{{ post.created | date: 'short' }}</p>
     </div>
