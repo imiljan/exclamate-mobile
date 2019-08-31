@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Apollo, QueryRef } from 'apollo-angular';
 import gql from 'graphql-tag';
-import { Subscription } from 'rxjs';
-import { SearchPagePostsQuery, SearchPagePostsQueryVariables } from 'src/generated/graphql';
+import { SearchPageQuery, SearchPageQueryVariables, User } from 'src/generated/graphql';
 
 @Component({
   selector: 'app-search',
@@ -10,50 +10,48 @@ import { SearchPagePostsQuery, SearchPagePostsQueryVariables } from 'src/generat
   styleUrls: ['./search.page.scss'],
 })
 export class SearchPage implements OnInit {
-  readonly SEARCH_POSTS = gql`
-    query searchPagePosts($limit: Int, $offset: Int, $searchParam: String) {
-      getPosts(limit: $limit, offset: $offset, searchParam: $searchParam)
-        @connection(key: "searchPosts") {
+  readonly SEARCH_USERS = gql`
+    query searchPage($searchParam: String!) {
+      getUsers(searchParam: $searchParam) {
         id
-        body
-        created
-        likes
-        user {
-          id
-          username
-          firstName
-          lastName
-          email
-        }
+        username
+        firstName
+        lastName
       }
     }
   `;
 
-  posts = [];
+  users: User[] = [];
   isLoading = false;
   offset = 0;
   limit = 10;
 
-  private querySubscription: Subscription;
-  searchPostsQuery: QueryRef<SearchPagePostsQuery>;
+  searchPostsQuery: QueryRef<SearchPageQuery>;
 
-  constructor(private apollo: Apollo) {}
+  constructor(private apollo: Apollo, private router: Router) {}
 
   ngOnInit() {}
 
   onSearchChange(event) {
+    if (event.target.value === '') {
+      this.users = [];
+      return;
+    }
     this.isLoading = true;
     console.log(this.isLoading);
     this.apollo
-      .query<SearchPagePostsQuery, SearchPagePostsQueryVariables>({
-        query: this.SEARCH_POSTS,
-        variables: { offset: this.offset, limit: this.limit, searchParam: event.target.value },
+      .query<SearchPageQuery, SearchPageQueryVariables>({
+        query: this.SEARCH_USERS,
+        variables: { searchParam: event.target.value },
         fetchPolicy: 'no-cache',
       })
       .subscribe(({ data, loading }) => {
-        this.posts = data.getPosts;
+        this.users = data.getUsers.map((el) => ({ ...el, email: '' }));
         this.isLoading = loading;
         console.log(this.isLoading);
       });
+  }
+  openProfilePage(userId: number) {
+    this.router.navigate(['profile', userId]);
   }
 }

@@ -78,11 +78,11 @@ export class PostPage implements OnInit, OnDestroy {
       }
       console.log('paramMap', paramMap.get('postId'));
       this.querySubscription = this.apollo
-        .query<PostPageQueryQuery, PostPageQueryQueryVariables>({
+        .watchQuery<PostPageQueryQuery, PostPageQueryQueryVariables>({
           query: this.POST_QUERY,
           variables: { id: paramMap.get('postId') },
         })
-        .subscribe(({ data, loading }) => {
+        .valueChanges.subscribe(({ data, loading }) => {
           this.post = data.getPost;
           this.isLoading = loading;
         });

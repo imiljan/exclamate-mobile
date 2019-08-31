@@ -64,6 +64,7 @@ export type Query = {
   login: Token,
   me: User,
   getUser?: Maybe<User>,
+  getUsers: Array<Maybe<User>>,
   getPost?: Maybe<Post>,
   getPosts: Array<Maybe<Post>>,
 };
@@ -80,6 +81,11 @@ export type QueryGetUserArgs = {
 };
 
 
+export type QueryGetUsersArgs = {
+  searchParam: Scalars['String']
+};
+
+
 export type QueryGetPostArgs = {
   id: Scalars['ID']
 };
@@ -87,8 +93,7 @@ export type QueryGetPostArgs = {
 
 export type QueryGetPostsArgs = {
   offset?: Maybe<Scalars['Int']>,
-  limit?: Maybe<Scalars['Int']>,
-  searchParam?: Maybe<Scalars['String']>
+  limit?: Maybe<Scalars['Int']>
 };
 
 export type RegisterInput = {
@@ -232,22 +237,16 @@ export type AddPostMutation = (
   ) }
 );
 
-export type SearchPagePostsQueryVariables = {
-  limit?: Maybe<Scalars['Int']>,
-  offset?: Maybe<Scalars['Int']>,
-  searchParam?: Maybe<Scalars['String']>
+export type SearchPageQueryVariables = {
+  searchParam: Scalars['String']
 };
 
 
-export type SearchPagePostsQuery = (
+export type SearchPageQuery = (
   { __typename?: 'Query' }
-  & { getPosts: Array<Maybe<(
-    { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'body' | 'created' | 'likes'>
-    & { user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'firstName' | 'lastName' | 'email'>
-    ) }
+  & { getUsers: Array<Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'username' | 'firstName' | 'lastName'>
   )>> }
 );
 
@@ -431,20 +430,13 @@ export const AddPostDocument = gql`
     document = AddPostDocument;
     
   }
-export const SearchPagePostsDocument = gql`
-    query searchPagePosts($limit: Int, $offset: Int, $searchParam: String) {
-  getPosts(limit: $limit, offset: $offset, searchParam: $searchParam) @connection(key: "searchPosts") {
+export const SearchPageDocument = gql`
+    query searchPage($searchParam: String!) {
+  getUsers(searchParam: $searchParam) {
     id
-    body
-    created
-    likes
-    user {
-      id
-      username
-      firstName
-      lastName
-      email
-    }
+    username
+    firstName
+    lastName
   }
 }
     `;
@@ -452,8 +444,8 @@ export const SearchPagePostsDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class SearchPagePostsGQL extends Apollo.Query<SearchPagePostsQuery, SearchPagePostsQueryVariables> {
-    document = SearchPagePostsDocument;
+  export class SearchPageGQL extends Apollo.Query<SearchPageQuery, SearchPageQueryVariables> {
+    document = SearchPageDocument;
     
   }
 export const MyProfilePageQueryDocument = gql`

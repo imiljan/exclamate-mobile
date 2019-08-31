@@ -15,8 +15,18 @@
 </ion-header>
 
 <ion-content>
-  <ion-spinner *ngIf="isLoading; else showPosts"></ion-spinner>
-  <ng-template #showPosts>
-    <app-post-item *ngFor="let post of posts" [post]="post"></app-post-item>
+  <ion-spinner *ngIf="isLoading; else showUsers"></ion-spinner>
+  <ng-template #showUsers>
+    <ion-list>
+      <ion-item *ngFor="let user of users" (click)="openProfilePage(user.id)">
+        <ion-avatar slot="start">
+          <img src="https://placekitten.com/200/200" />
+        </ion-avatar>
+        <ion-label>
+          <h3>{{ user.firstName }} {{ user.lastName }}</h3>
+          <p>@ {{ user.username }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
   </ng-template>
 </ion-content>

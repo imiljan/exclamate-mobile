@@ -64,6 +64,7 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   user: User;
   isLoading = true;
+  isMyProfile = true;
 
   private querySubscription: Subscription;
 
@@ -81,6 +82,7 @@ export class ProfilePage implements OnInit, OnDestroy {
           .subscribe(({ data, loading }) => {
             this.user = data.getUser;
             this.isLoading = loading;
+            this.isMyProfile = false;
             this.user.posts = this.user.posts.map((el) => ({
               ...el,
               user: this.user,
@@ -95,6 +97,8 @@ export class ProfilePage implements OnInit, OnDestroy {
           .subscribe(({ data, loading }) => {
             this.user = data.me;
             this.isLoading = loading;
+            this.isMyProfile = true;
+
             console.log(this.user.posts);
             this.user.posts = this.user.posts.map((el) => ({
               ...el,
