@@ -3,18 +3,17 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
-import { MessageItemComponent } from './message-item/message-item.component';
-import { MessagesPage } from './messages.page';
+import { ConversationPage } from './conversation.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: MessagesPage,
+    component: ConversationPage,
   },
 ];
 
 @NgModule({
   imports: [CommonModule, IonicModule, RouterModule.forChild(routes)],
-  declarations: [MessagesPage, MessageItemComponent],
+  declarations: [ConversationPage],
 })
-export class MessagesPageModule {}
+export class ConversationPageModule {}

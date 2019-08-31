@@ -41,7 +41,16 @@ const routes: Routes = [
       },
       {
         path: 'messages',
-        loadChildren: './messages/messages.module#MessagesPageModule',
+        children: [
+          {
+            path: '',
+            loadChildren: './messages/messages.module#MessagesPageModule',
+          },
+          {
+            path: ':userId',
+            loadChildren: './messages/conversation/conversation.module#ConversationPageModule',
+          },
+        ],
       },
     ],
   },

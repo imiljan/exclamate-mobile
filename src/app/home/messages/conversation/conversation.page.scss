@@ -1,0 +1,33 @@
+.my-message {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.message {
+  padding-bottom: 15px;
+  padding-right: 10px;
+  white-space: normal;
+  text-align: left;
+  span {
+    position: absolute;
+    right: 5px;
+    bottom: 3px;
+    font-size: 10px;
+    font-style: italic;
+  }
+}
+
+.message-form {
+  position: fixed;
+  bottom: 0;
+  width: 96%;
+  margin-left: 2%;
+  border-radius: 20px !important;
+  font-size: 0.9em;
+  margin-bottom: 10px;
+  border: 1px solid var(--ion-color-primary);
+}
+
+ion-grid {
+  padding-bottom: 130px;
+}
