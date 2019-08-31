@@ -10,7 +10,10 @@ const routes: Routes = [
     path: '',
     component: AuthPage,
   },
-  { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
+  {
+    path: 'login',
+    loadChildren: './login/login.module#LoginPageModule',
+  },
   {
     path: 'register',
     loadChildren: './register/register.module#RegisterPageModule',

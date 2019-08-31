@@ -1,6 +1,9 @@
 .my-message {
   display: flex;
   justify-content: flex-end;
+  ion-badge {
+    color: #000;
+  }
 }
 
 .message {
@@ -29,5 +32,5 @@
 }
 
 ion-grid {
-  padding-bottom: 130px;
+  padding-bottom: 60px;
 }

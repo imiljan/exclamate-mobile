@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-message-item',
@@ -8,7 +9,11 @@ import { Component, OnInit } from '@angular/core';
 export class MessageItemComponent implements OnInit {
   temp = 'foo';
 
-  constructor() {}
+  constructor(private router: Router) {}
 
   ngOnInit() {}
+
+  onClick() {
+    this.router.navigate(['home', 'tabs', 'messages', '123']);
+  }
 }
