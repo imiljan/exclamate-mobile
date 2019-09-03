@@ -11,10 +11,12 @@
   <form>
     <ion-item>
       <ion-label position="floating">Write here...</ion-label>
-      <ion-textarea [(ngModel)]="body" rows="5" (ionFocus)="footerVisible=false"
-                    (ionBlur)="footerVisible=true" name="body"
-                    required></ion-textarea>
+      <ion-textarea [(ngModel)]="body" rows="5" name="body" required></ion-textarea>
     </ion-item>
+    <app-image-picker
+      [showPreview]="image != ''"
+      (imagePick)="onImagePicked($event)"
+    ></app-image-picker>
   </form>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button type="submit" (click)="onCreatePost()">
@@ -22,20 +24,3 @@
     </ion-fab-button>
   </ion-fab>
 </ion-content>
-<ion-footer *ngIf="footerVisible">
-  <ion-row text-center>
-    <ion-col>
-      <ion-button fill="clear" (click)="onTakePicture()">
-        <ion-icon name="camera" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-col>
-    <ion-col>
-      <ion-button fill="clear" (click)="fileInput.click()">
-        <ion-icon name="folder" slot="icon-only"></ion-icon>
-      </ion-button>
-      <div hidden>
-        <input type="file" #fileInput (click)="fileInput.value = null"
-               (change)="onSelectFromStorage($event)"/></div>
-    </ion-col>
-  </ion-row>
-</ion-footer>
