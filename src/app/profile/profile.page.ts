@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { Subscription } from 'rxjs';
@@ -18,6 +18,8 @@ import {
   UserProfilePageQueryQuery,
   UserProfilePageQueryQueryVariables,
 } from 'src/generated/graphql';
+
+import { EditProfileComponent } from './edit-profile/edit-profile.component';
 
 @Component({
   selector: 'app-profile',
@@ -94,7 +96,8 @@ export class ProfilePage implements OnInit, OnDestroy {
   constructor(
     private apollo: Apollo,
     private route: ActivatedRoute,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private modalController: ModalController
   ) {}
 
   ngOnInit() {
@@ -191,6 +194,19 @@ export class ProfilePage implements OnInit, OnDestroy {
       .then((alert) => {
         alert.present();
       });
+  }
+
+  onEdit() {
+    this.modalController
+      .create({
+        component: EditProfileComponent,
+        componentProps: {
+          firstName: this.user.firstName,
+          lastName: this.user.lastName,
+          email: this.user.email,
+        },
+      })
+      .then((modal) => modal.present());
   }
 
   ngOnDestroy() {

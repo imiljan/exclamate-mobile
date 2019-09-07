@@ -4,6 +4,11 @@
       <ion-menu-button *ngIf="isMyProfile" side="start" type="overlay"></ion-menu-button>
       <ion-back-button *ngIf="!isMyProfile"></ion-back-button>
     </ion-buttons>
+    <ion-buttons *ngIf="isMyProfile" slot="end"
+      ><ion-button (click)="onEdit()">
+        <ion-icon slot="icon-only" name="create"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title>Profile</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -20,10 +25,10 @@
         <div>
           <h1 no-margin>{{ user.firstName }} {{ user.lastName }}</h1>
           <h2 no-margin>@{{ user.username }}</h2>
-          <ion-button *ngIf="canFollow" (click)="onFollow()" fill="outline">
+          <ion-button *ngIf="!isMyProfile && canFollow" (click)="onFollow()" fill="outline">
             Follow
           </ion-button>
-          <ion-button *ngIf="!canFollow" (click)="onUnfollow()" fill="solid">
+          <ion-button *ngIf="!isMyProfile && !canFollow" (click)="onUnfollow()" fill="solid">
             Following
           </ion-button>
         </div>
