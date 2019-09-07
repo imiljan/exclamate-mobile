@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home/tabs/posts"></ion-back-button>
     </ion-buttons>
-    <ion-buttons slot="end"
+    <ion-buttons *ngIf="isMyPost" slot="end"
       ><ion-button (click)="presentActionSheet()">
         <ion-icon slot="icon-only" name="more"></ion-icon>
       </ion-button>

@@ -14,6 +14,7 @@ import {
   HomePagePostsDocument,
   HomePagePostsQuery,
   HomePagePostsQueryVariables,
+  MyProfilePageQueryQuery,
   Post,
   PostPageQueryDocument,
   PostPageQueryQuery,
@@ -92,6 +93,7 @@ export class PostPage implements OnInit, OnDestroy {
   post: Post;
   isLoading = true;
   comment = '';
+  isMyPost = false;
 
   private querySubscription: Subscription;
 
@@ -108,6 +110,18 @@ export class PostPage implements OnInit, OnDestroy {
       if (!paramMap.has('postId')) {
         this.router.navigate(['home', 'tabs', 'posts']);
       }
+
+      const { me } = this.apollo.getClient().readQuery<MyProfilePageQueryQuery>({
+        query: gql`
+          query MyProfilePageQuery {
+            me {
+              id
+              username
+            }
+          }
+        `,
+      });
+
       console.log('paramMap', paramMap.get('postId'));
       this.querySubscription = this.apollo
         .watchQuery<PostPageQueryQuery, PostPageQueryQueryVariables>({
@@ -117,6 +131,7 @@ export class PostPage implements OnInit, OnDestroy {
         .valueChanges.subscribe(({ data, loading }) => {
           this.post = data.getPost;
           this.isLoading = loading;
+          this.isMyPost = me.id === data.getPost.user.id;
         });
     });
   }
