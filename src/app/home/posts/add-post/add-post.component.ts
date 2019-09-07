@@ -1,5 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
+import { Post } from 'src/generated/graphql';
 
 @Component({
   selector: 'app-add-post',
@@ -10,10 +11,17 @@ export class AddPostComponent implements OnInit {
   body = '';
   footerVisible = true;
   @ViewChild('fileInput', { static: false }) fileInput: any;
+  @Input() post: Post;
+  editMode = false;
 
   constructor(private modalCtrl: ModalController, private alertCtrl: AlertController) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.post) {
+      this.body = this.post.body;
+      this.editMode = true;
+    }
+  }
 
   onCancel() {
     this.modalCtrl.dismiss();
@@ -39,7 +47,11 @@ export class AddPostComponent implements OnInit {
           alertEl.present();
         });
     } else {
-      this.modalCtrl.dismiss({ body: this.body }, 'add');
+      if (this.editMode) {
+        this.modalCtrl.dismiss({ body: this.body }, 'edit');
+      } else {
+        this.modalCtrl.dismiss({ body: this.body }, 'add');
+      }
     }
   }
 

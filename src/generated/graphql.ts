@@ -26,6 +26,8 @@ export type Mutation = {
   _?: Maybe<Scalars['Boolean']>;
   register: RegisterResponse;
   createPost: Post;
+  deletePost: Scalars['Boolean'];
+  editPost: Post;
   createComment: Comment;
 };
 
@@ -34,6 +36,15 @@ export type MutationRegisterArgs = {
 };
 
 export type MutationCreatePostArgs = {
+  body: Scalars['String'];
+};
+
+export type MutationDeletePostArgs = {
+  postId: Scalars['ID'];
+};
+
+export type MutationEditPostArgs = {
+  postId: Scalars['ID'];
   body: Scalars['String'];
 };
 
@@ -176,6 +187,21 @@ export type CommentMutation = { __typename?: 'Mutation' } & {
         'id' | 'username' | 'email' | 'firstName' | 'lastName'
       >;
     };
+};
+
+export type DeletePostMutationVariables = {
+  postId: Scalars['ID'];
+};
+
+export type DeletePostMutation = { __typename?: 'Mutation' } & Pick<Mutation, 'deletePost'>;
+
+export type EditPostMutationVariables = {
+  postId: Scalars['ID'];
+  body: Scalars['String'];
+};
+
+export type EditPostMutation = { __typename?: 'Mutation' } & {
+  editPost: { __typename?: 'Post' } & Pick<Post, 'id' | 'body'>;
 };
 
 export type HomePagePostsQueryVariables = {
@@ -366,6 +392,36 @@ export const CommentDocument = gql`
 })
 export class CommentGQL extends Apollo.Mutation<CommentMutation, CommentMutationVariables> {
   document = CommentDocument;
+}
+export const DeletePostDocument = gql`
+  mutation DeletePost($postId: ID!) {
+    deletePost(postId: $postId)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class DeletePostGQL extends Apollo.Mutation<
+  DeletePostMutation,
+  DeletePostMutationVariables
+> {
+  document = DeletePostDocument;
+}
+export const EditPostDocument = gql`
+  mutation EditPost($postId: ID!, $body: String!) {
+    editPost(postId: $postId, body: $body) {
+      id
+      body
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class EditPostGQL extends Apollo.Mutation<EditPostMutation, EditPostMutationVariables> {
+  document = EditPostDocument;
 }
 export const HomePagePostsDocument = gql`
   query homePagePosts($limit: Int, $offset: Int) {

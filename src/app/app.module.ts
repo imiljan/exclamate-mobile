@@ -13,10 +13,12 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthInterceptor } from './auth/auth.interceptor';
+import { AddPostComponent } from './home/posts/add-post/add-post.component';
+import { PostsPageModule } from './home/posts/posts.module';
 
 @NgModule({
   declarations: [AppComponent],
-  entryComponents: [],
+  entryComponents: [AddPostComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -24,6 +26,7 @@ import { AuthInterceptor } from './auth/auth.interceptor';
     HttpClientModule,
     ApolloModule,
     HttpLinkModule,
+    PostsPageModule,
   ],
   providers: [
     StatusBar,

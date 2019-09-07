@@ -19,5 +19,6 @@ const routes: Routes = [
   imports: [CommonModule, IonicModule, FormsModule, RouterModule.forChild(routes), SharedModule],
   declarations: [PostsPage, AddPostComponent],
   entryComponents: [AddPostComponent],
+  exports: [AddPostComponent],
 })
 export class PostsPageModule {}

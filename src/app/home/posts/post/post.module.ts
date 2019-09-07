@@ -3,8 +3,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
-import { PostPage } from './post.page';
 import { SharedModule } from '../../../shared/shared.module';
+import { PostPage } from './post.page';
 
 const routes: Routes = [
   {
