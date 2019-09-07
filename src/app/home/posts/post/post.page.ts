@@ -14,7 +14,8 @@ import {
   HomePagePostsDocument,
   HomePagePostsQuery,
   HomePagePostsQueryVariables,
-  MyProfilePageQueryQuery,
+  MeCacheDocument,
+  MeCacheQuery,
   Post,
   PostPageQueryDocument,
   PostPageQueryQuery,
@@ -111,15 +112,8 @@ export class PostPage implements OnInit, OnDestroy {
         this.router.navigate(['home', 'tabs', 'posts']);
       }
 
-      const { me } = this.apollo.getClient().readQuery<MyProfilePageQueryQuery>({
-        query: gql`
-          query MyProfilePageQuery {
-            me {
-              id
-              username
-            }
-          }
-        `,
+      const { me } = this.apollo.getClient().readQuery<MeCacheQuery>({
+        query: MeCacheDocument,
       });
 
       console.log('paramMap', paramMap.get('postId'));
@@ -174,7 +168,7 @@ export class PostPage implements OnInit, OnDestroy {
             text: 'Delete',
             role: 'destructive',
             icon: 'trash',
-            cssClass: 'action-sheet-item',
+            cssClass: 'primary',
             handler: () => {
               this.apollo
                 .mutate<DeletePostMutation, DeletePostMutationVariables>({

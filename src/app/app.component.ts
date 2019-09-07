@@ -6,6 +6,7 @@ import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { Subscription } from 'rxjs';
 import { filter, switchMap, take, tap } from 'rxjs/operators';
+import { MeCacheQuery } from 'src/generated/graphql';
 
 import { AuthService } from './auth/auth.service';
 
@@ -52,9 +53,9 @@ export class AppComponent implements OnInit, OnDestroy {
         take(1),
         switchMap((isAuth) => {
           console.log(isAuth);
-          return this.apollo.query({
+          return this.apollo.query<MeCacheQuery>({
             query: gql`
-              query MyProfilePageQuery {
+              query MeCache {
                 me {
                   id
                   username

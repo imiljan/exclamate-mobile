@@ -20,6 +20,12 @@
         <div>
           <h1 no-margin>{{ user.firstName }} {{ user.lastName }}</h1>
           <h2 no-margin>@{{ user.username }}</h2>
+          <ion-button *ngIf="canFollow" (click)="onFollow()" fill="outline">
+            Follow
+          </ion-button>
+          <ion-button *ngIf="!canFollow" (click)="onUnfollow()" fill="solid">
+            Following
+          </ion-button>
         </div>
       </ion-col>
     </ion-row>
