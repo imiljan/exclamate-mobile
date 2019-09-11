@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./conversation.page.scss'],
 })
 export class ConversationPage implements OnInit {
-  message = 'TEST';
+  message = '';
 
   constructor() {}
 

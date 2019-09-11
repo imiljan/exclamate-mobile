@@ -1,14 +1,14 @@
 <ion-item>
   <ion-avatar slot="start">
-    <img src="https://placekitten.com/200/200"/>
+    <img src="../../../../assets/avatar/avatar.svg" />
   </ion-avatar>
   <ion-label>
     <div style="display: flex;justify-content: space-between">
-      <h1 style="display: inline; margin: 0">Username{{ temp }}</h1>
+      <h1 style="display: inline; margin: 0">{{ temp % 2 == 0 ? 'mark' : 'jeff' }}</h1>
       <span style="font-size: 12px; font-style: italic">
-            {{ '2012-01-02' | date: 'short' }}
-          </span>
+        {{ '2012-01-0' + temp | date: 'short' }}
+      </span>
     </div>
-    <p no-margin>Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
+    <p no-margin>@{{ temp % 2 == 0 ? 'mark' : 'jeff' }} liked your post</p>
   </ion-label>
 </ion-item>

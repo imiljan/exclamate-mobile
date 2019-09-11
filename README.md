@@ -1,4 +1,5 @@
 # exclamate-mobile
+
 Twitter-like mobile application build with Ionic4, Angular and ApolloClient that consumes GraphQL backend.
 This project is for trying out Ionic 4 with Angular and GraphQL in a real-world application.
 
@@ -20,8 +21,16 @@ This project is for trying out Ionic 4 with Angular and GraphQL in a real-world 
 
 ### Android
 
-1. Run `ionic cordova run android --prod`
+```bash
+ionic build
+ionic capacitor add android
+ionic capacitor open android
+```
 
 ### iOS
 
-1. Run `ionic cordova run ios --prod`
+```bash
+ionic build
+ionic capacitor add ios
+ionic capacitor open ios
+```
