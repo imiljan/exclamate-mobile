@@ -1,0 +1,8 @@
+query searchPage($searchParam: String!) {
+  getUsers(searchParam: $searchParam) {
+    id
+    username
+    firstName
+    lastName
+  }
+}

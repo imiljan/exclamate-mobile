@@ -1,0 +1,6 @@
+query MeCache {
+  me {
+    id
+    username
+  }
+}

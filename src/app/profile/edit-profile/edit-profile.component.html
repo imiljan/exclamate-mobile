@@ -7,46 +7,46 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content class="ion-padding">
   <form #f="ngForm" (ngSubmit)="onSubmit(f)">
     <ion-grid>
       <ion-row>
-        <ion-col size-sm="6" offset-sm="3">
+        <ion-col offset-sm="3" size-sm="6">
           <ion-list>
             <ion-item>
               <ion-label position="floating">First Name</ion-label>
               <ion-input
-                type="text"
-                [(ngModel)]="firstName"
-                name="firstName"
-                required
-                firstName
+                  [(ngModel)]="firstName"
+                  firstName
+                  name="firstName"
+                  required
+                  type="text"
               ></ion-input>
             </ion-item>
             <ion-item>
               <ion-label position="floating">Last Name</ion-label>
               <ion-input
-                type="text"
-                [(ngModel)]="lastName"
-                name="lastName"
-                required
-                lastName
+                  [(ngModel)]="lastName"
+                  lastName
+                  name="lastName"
+                  required
+                  type="text"
               ></ion-input>
             </ion-item>
             <ion-item>
               <ion-label position="floating">E-Mail</ion-label>
-              <ion-input type="email" [(ngModel)]="email" name="email" required email></ion-input>
+              <ion-input [(ngModel)]="email" email name="email" required type="email"></ion-input>
             </ion-item>
             <ion-item>
               <ion-label position="floating">Password</ion-label>
-              <ion-input type="password" ngModel name="password" required minlength="6"></ion-input>
+              <ion-input minlength="6" name="password" ngModel required type="password"></ion-input>
             </ion-item>
           </ion-list>
         </ion-col>
       </ion-row>
       <ion-row>
-        <ion-col size-sm="6" offset-sm="3">
-          <ion-button type="submit" color="primary" expand="block" [disabled]="!f.valid">
+        <ion-col offset-sm="3" size-sm="6">
+          <ion-button [disabled]="!f.valid" color="primary" expand="block" type="submit">
             Confirm
           </ion-button>
         </ion-col>

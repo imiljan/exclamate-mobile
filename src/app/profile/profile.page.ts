@@ -2,24 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AlertController, ModalController } from '@ionic/angular';
 import { Apollo } from 'apollo-angular';
-import gql from 'graphql-tag';
 import { Subscription } from 'rxjs';
-import {
-  FollowDocument,
-  FollowMutation,
-  FollowMutationVariables,
-  MeCacheDocument,
-  MeCacheQuery,
-  MyProfilePageQueryQuery,
-  UnfollowDocument,
-  UnfollowMutation,
-  UnfollowMutationVariables,
-  User,
-  UserProfilePageQueryQuery,
-  UserProfilePageQueryQueryVariables,
-} from 'src/generated/graphql';
+import { FollowGQL, MyProfilePageQueryGQL, UnfollowGQL, User, UserProfilePageQueryGQL } from '../../generated/graphql';
 
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
+import gql from 'graphql-tag';
 
 @Component({
   selector: 'app-profile',
@@ -27,65 +14,6 @@ import { EditProfileComponent } from './edit-profile/edit-profile.component';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit, OnDestroy {
-  readonly MY_PROFILE_QUERY = gql`
-    query MyProfilePageQuery {
-      me {
-        id
-        username
-        firstName
-        lastName
-        email
-        bio
-        location
-        joinedDate
-        followers
-        following
-        posts {
-          id
-          body
-          created
-          likes
-        }
-      }
-    }
-  `;
-
-  readonly USER_PROFILE_QUERY = gql`
-    query UserProfilePageQuery($id: ID!) {
-      getUser(id: $id) {
-        id
-        username
-        firstName
-        lastName
-        email
-        bio
-        location
-        joinedDate
-        followers
-        following
-        posts {
-          id
-          body
-          created
-          likes
-        }
-      }
-
-      canFollow(userId: $id)
-    }
-  `;
-
-  readonly FOLLOW_USER = gql`
-    mutation Follow($userId: ID!) {
-      follow(userId: $userId)
-    }
-  `;
-  readonly UNFOLLOW_USER = gql`
-    mutation Unfollow($userId: ID!) {
-      unfollow(userId: $userId)
-    }
-  `;
-
   user: User;
   isLoading = true;
   isMyProfile = true;
@@ -97,22 +25,31 @@ export class ProfilePage implements OnInit, OnDestroy {
     private apollo: Apollo,
     private route: ActivatedRoute,
     private alertCtrl: AlertController,
-    private modalController: ModalController
-  ) {}
+    private modalController: ModalController,
+    private userProfilePageQuery: UserProfilePageQueryGQL,
+    private myProfilePageQuery: MyProfilePageQueryGQL,
+    private follow: FollowGQL,
+    private unfollow: UnfollowGQL,
+  ) {
+  }
 
   ngOnInit() {
-    const { me } = this.apollo.getClient().readQuery<MeCacheQuery>({
-      query: MeCacheDocument,
+    const { me } = this.apollo.getClient().readQuery({
+      query: gql`
+        query MeCache {
+          me {
+            id
+            username
+          }
+        }
+      `,
     });
 
     this.route.paramMap.subscribe((paramMap) => {
       console.log(paramMap.get('userId'));
       if (paramMap.has('userId')) {
-        this.querySubscription = this.apollo
-          .query<UserProfilePageQueryQuery, UserProfilePageQueryQueryVariables>({
-            query: this.USER_PROFILE_QUERY,
-            variables: { id: paramMap.get('userId') },
-          })
+        this.querySubscription = this.userProfilePageQuery
+          .fetch({ id: paramMap.get('userId') })
           .subscribe(({ data, loading }) => {
             this.user = data.getUser;
             this.isLoading = loading;
@@ -125,40 +62,31 @@ export class ProfilePage implements OnInit, OnDestroy {
             }));
           });
       } else {
-        this.querySubscription = this.apollo
-          .query<MyProfilePageQueryQuery>({
-            query: this.MY_PROFILE_QUERY,
-          })
-          .subscribe(({ data, loading }) => {
-            this.user = data.me;
-            this.isLoading = loading;
-            this.isMyProfile = true;
-            this.canFollow = false;
-            this.user.posts = this.user.posts.map((el) => ({
-              ...el,
-              user: this.user,
-              comments: [],
-            }));
-          });
+        this.querySubscription = this.myProfilePageQuery.fetch().subscribe(({ data, loading }) => {
+          this.user = data.me;
+          this.isLoading = loading;
+          this.isMyProfile = true;
+          this.canFollow = false;
+          this.user.posts = this.user.posts.map((el) => ({
+            ...el,
+            user: this.user,
+            comments: [],
+          }));
+        });
       }
     });
   }
 
   onFollow() {
-    this.apollo
-      .mutate<FollowMutation, FollowMutationVariables>({
-        mutation: FollowDocument,
-        variables: { userId: this.user.id },
-      })
-      .subscribe(
-        (res) => {
-          console.log('User followed');
-          this.canFollow = false;
-        },
-        (err) => {
-          console.error('User not followed');
-        }
-      );
+    this.follow.mutate({ userId: this.user.id }).subscribe(
+      (res) => {
+        console.log('User followed');
+        this.canFollow = false;
+      },
+      (err) => {
+        console.error('User not followed');
+      },
+    );
   }
 
   onUnfollow() {
@@ -173,20 +101,15 @@ export class ProfilePage implements OnInit, OnDestroy {
           {
             text: 'Okay',
             handler: () => {
-              this.apollo
-                .mutate<UnfollowMutation, UnfollowMutationVariables>({
-                  mutation: UnfollowDocument,
-                  variables: { userId: this.user.id },
-                })
-                .subscribe(
-                  (res) => {
-                    console.log('User unfollowed');
-                    this.canFollow = true;
-                  },
-                  (err) => {
-                    console.error('User not unfollowed');
-                  }
-                );
+              this.unfollow.mutate({ userId: this.user.id }).subscribe(
+                (res) => {
+                  console.log('User unfollowed');
+                  this.canFollow = true;
+                },
+                (err) => {
+                  console.error('User not unfollowed');
+                },
+              );
             },
           },
         ],

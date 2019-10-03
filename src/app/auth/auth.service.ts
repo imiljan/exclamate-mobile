@@ -1,15 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Plugins } from '@capacitor/core';
-import { Apollo } from 'apollo-angular';
-import gql from 'graphql-tag';
 import { BehaviorSubject, from } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import {
-  LoginUserQuery,
-  LoginUserQueryVariables,
-  RegisterUserMutation,
-  RegisterUserMutationVariables,
-} from 'src/generated/graphql';
+import { LoginUserGQL, RegisterUserGQL } from '../../generated/graphql';
 
 const { Storage } = Plugins;
 
@@ -17,9 +10,10 @@ const { Storage } = Plugins;
   providedIn: 'root',
 })
 export class AuthService {
-  private _storedToken = new BehaviorSubject<string>(null);
+  constructor(private loginUserGql: LoginUserGQL, private registerUserGql: RegisterUserGQL) {
+  }
 
-  constructor(private apollo: Apollo) {}
+  private _storedToken = new BehaviorSubject<string>(null);
 
   get storedToken() {
     return this._storedToken.asObservable();
@@ -33,29 +27,20 @@ export class AuthService {
         } else {
           return false;
         }
-      })
+      }),
     );
   }
 
   login(username: string, password: string) {
-    return this.apollo
-      .query<LoginUserQuery, LoginUserQueryVariables>({
-        query: gql`
-          query LoginUser($username: String!, $password: String!) {
-            login(username: $username, password: $password) {
-              token
-            }
-          }
-        `,
-        variables: {
-          username,
-          password,
-        },
+    return this.loginUserGql
+      .fetch({
+        username,
+        password,
       })
       .pipe(
         tap((res) => {
           this.setUserData(res.data.login.token);
-        })
+        }),
       );
   }
 
@@ -65,36 +50,20 @@ export class AuthService {
   }
 
   register(username: string, password: string, email: string, firstName: string, lastName: string) {
-    return this.apollo
-      .mutate<RegisterUserMutation, RegisterUserMutationVariables>({
-        mutation: gql`
-          mutation RegisterUser($input: RegisterInput!) {
-            register(userData: $input) {
-              user {
-                id
-                username
-                lastName
-                firstName
-                email
-              }
-              token
-            }
-          }
-        `,
-        variables: {
-          input: {
-            username,
-            password,
-            firstName,
-            lastName,
-            email,
-          },
+    return this.registerUserGql
+      .mutate({
+        input: {
+          username,
+          password,
+          firstName,
+          lastName,
+          email,
         },
       })
       .pipe(
         tap((res) => {
           this.setUserData(res.data.register.token);
-        })
+        }),
       );
   }
 
@@ -112,7 +81,7 @@ export class AuthService {
         console.log('Token stored in memory', token);
         this._storedToken.next(token);
       }),
-      map((token) => !!token)
+      map((token) => !!token),
     );
   }
 

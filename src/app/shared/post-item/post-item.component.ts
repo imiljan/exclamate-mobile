@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Post } from 'src/generated/graphql';
+import { Post } from '../../../generated/graphql';
 
 @Component({
   selector: 'app-post-item',
@@ -10,9 +10,11 @@ import { Post } from 'src/generated/graphql';
 export class PostItemComponent implements OnInit {
   @Input() post: Post;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+  }
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
   openPost() {
     this.router.navigate(['home', 'tabs', 'posts', this.post.id]);

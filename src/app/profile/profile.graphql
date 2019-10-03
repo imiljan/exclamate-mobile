@@ -1,0 +1,50 @@
+query MyProfilePageQuery {
+  me {
+    id
+    username
+    firstName
+    lastName
+    email
+    bio
+    location
+    joinedDate
+    followers
+    following
+    posts {
+      id
+      body
+      created
+      likes
+    }
+  }
+}
+
+query UserProfilePageQuery($id: ID!) {
+  getUser(id: $id) {
+    id
+    username
+    firstName
+    lastName
+    email
+    bio
+    location
+    joinedDate
+    followers
+    following
+    posts {
+      id
+      body
+      created
+      likes
+    }
+  }
+  canFollow(userId: $id)
+}
+
+mutation Follow($userId: ID!) {
+  follow(userId: $userId)
+}
+
+mutation Unfollow($userId: ID!) {
+  unfollow(userId: $userId)
+}

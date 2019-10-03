@@ -2,15 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController, ModalController } from '@ionic/angular';
 import { Apollo } from 'apollo-angular';
-import gql from 'graphql-tag';
 import { Subscription } from 'rxjs';
 import {
-  CommentMutation,
-  CommentMutationVariables,
-  DeletePostMutation,
-  DeletePostMutationVariables,
-  EditPostMutation,
-  EditPostMutationVariables,
+  CommentGQL,
+  DeletePostGQL,
+  EditPostGQL,
   HomePagePostsDocument,
   HomePagePostsQuery,
   HomePagePostsQueryVariables,
@@ -18,9 +14,10 @@ import {
   MeCacheQuery,
   Post,
   PostPageQueryDocument,
+  PostPageQueryGQL,
   PostPageQueryQuery,
   PostPageQueryQueryVariables,
-} from 'src/generated/graphql';
+} from '../../../../generated/graphql';
 
 import { AddPostComponent } from '../add-post/add-post.component';
 
@@ -30,67 +27,6 @@ import { AddPostComponent } from '../add-post/add-post.component';
   styleUrls: ['./post.page.scss'],
 })
 export class PostPage implements OnInit, OnDestroy {
-  readonly POST_QUERY = gql`
-    query PostPageQuery($id: ID!) {
-      getPost(id: $id) {
-        id
-        body
-        created
-        likes
-        user {
-          id
-          username
-          firstName
-          lastName
-          email
-        }
-        comments {
-          id
-          body
-          created
-          user {
-            id
-            username
-            email
-            firstName
-            lastName
-          }
-        }
-      }
-    }
-  `;
-  readonly COMMENT_MUTATION = gql`
-    mutation Comment($postId: Int!, $body: String!) {
-      createComment(postId: $postId, body: $body) {
-        id
-        body
-        created
-        user {
-          id
-          username
-          email
-          firstName
-          lastName
-        }
-      }
-    }
-  `;
-
-  readonly DELETE_POST_MUTATION = gql`
-    mutation DeletePost($postId: ID!) {
-      deletePost(postId: $postId)
-    }
-  `;
-
-  readonly EDIT_POST_MUTATION = gql`
-    mutation EditPost($postId: ID!, $body: String!) {
-      editPost(postId: $postId, body: $body) {
-        id
-        body
-      }
-    }
-  `;
-
   post: Post;
   isLoading = true;
   comment = '';
@@ -100,11 +36,16 @@ export class PostPage implements OnInit, OnDestroy {
 
   constructor(
     private apollo: Apollo,
+    private getPosts: PostPageQueryGQL,
+    private createComment: CommentGQL,
+    private editPost: EditPostGQL,
+    private deletePost: DeletePostGQL,
     private route: ActivatedRoute,
     private actionSheetController: ActionSheetController,
     private modalCtrl: ModalController,
-    private router: Router
-  ) {}
+    private router: Router,
+  ) {
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe((paramMap) => {
@@ -117,11 +58,8 @@ export class PostPage implements OnInit, OnDestroy {
       });
 
       console.log('paramMap', paramMap.get('postId'));
-      this.querySubscription = this.apollo
-        .watchQuery<PostPageQueryQuery, PostPageQueryQueryVariables>({
-          query: this.POST_QUERY,
-          variables: { id: paramMap.get('postId') },
-        })
+      this.querySubscription = this.getPosts
+        .watch({ id: paramMap.get('postId') })
         .valueChanges.subscribe(({ data, loading }) => {
           this.post = data.getPost;
           this.isLoading = loading;
@@ -132,27 +70,28 @@ export class PostPage implements OnInit, OnDestroy {
 
   onComment() {
     console.log(this.comment);
-    this.apollo
-      .mutate<CommentMutation, CommentMutationVariables>({
-        mutation: this.COMMENT_MUTATION,
-        variables: { postId: +this.post.id, body: this.comment },
-        update: (proxy, { data: { createComment } }) => {
-          // Read the data from our cache for this query.
-          const postInCache = proxy.readQuery<PostPageQueryQuery, PostPageQueryQueryVariables>({
-            query: this.POST_QUERY,
-            variables: { id: this.post.id },
-          });
+    this.createComment
+      .mutate(
+        { postId: +this.post.id, body: this.comment },
+        {
+          update: (proxy, { data: { createComment } }) => {
+            // Read the data from our cache for this query.
+            const postInCache = proxy.readQuery<PostPageQueryQuery, PostPageQueryQueryVariables>({
+              query: PostPageQueryDocument,
+              variables: { id: this.post.id },
+            });
 
-          // Add our todo from the mutation to the start.
-          postInCache.getPost.comments.push(createComment);
+            // Add our todo from the mutation to the start.
+            postInCache.getPost.comments.push(createComment);
 
-          // Write our data back to the cache.
-          proxy.writeQuery({
-            query: this.POST_QUERY,
-            data: postInCache,
-          });
+            // Write our data back to the cache.
+            proxy.writeQuery({
+              query: PostPageQueryDocument,
+              data: postInCache,
+            });
+          },
         },
-      })
+      )
       .subscribe((res) => {
         console.log(`created`, res);
       });
@@ -170,32 +109,31 @@ export class PostPage implements OnInit, OnDestroy {
             icon: 'trash',
             cssClass: 'primary',
             handler: () => {
-              this.apollo
-                .mutate<DeletePostMutation, DeletePostMutationVariables>({
-                  mutation: this.DELETE_POST_MUTATION,
-                  variables: { postId: this.post.id },
-                  update: (proxy, { data: { deletePost } }) => {
-                    // Read the data from our cache for this query.
-                    const postsInCache = proxy.readQuery<
-                      HomePagePostsQuery,
-                      HomePagePostsQueryVariables
-                    >({
-                      query: HomePagePostsDocument,
-                      variables: { limit: 10, offset: 0 },
-                    });
+              this.deletePost
+                .mutate(
+                  { postId: this.post.id },
+                  {
+                    update: (proxy, { data: { deletePost } }) => {
+                      // Read the data from our cache for this query.
+                      const postsInCache = proxy.readQuery<HomePagePostsQuery,
+                        HomePagePostsQueryVariables>({
+                        query: HomePagePostsDocument,
+                        variables: { limit: 10, offset: 0 },
+                      });
 
-                    // Add our todo from the mutation to the start.
-                    postsInCache.getPosts = postsInCache.getPosts.filter(
-                      (el) => el.id !== this.post.id
-                    );
+                      // Add our todo from the mutation to the start.
+                      postsInCache.getPosts = postsInCache.getPosts.filter(
+                        (el) => el.id !== this.post.id,
+                      );
 
-                    // Write our data back to the cache.
-                    proxy.writeQuery({
-                      query: HomePagePostsDocument,
-                      data: postsInCache,
-                    });
+                      // Write our data back to the cache.
+                      proxy.writeQuery({
+                        query: HomePagePostsDocument,
+                        data: postsInCache,
+                      });
+                    },
                   },
-                })
+                )
                 .subscribe((res) => {
                   if (res.data.deletePost === true) {
                     console.log('post deleted');
@@ -221,35 +159,34 @@ export class PostPage implements OnInit, OnDestroy {
                     console.log(data);
                     console.log(role);
                     if (role === 'edit') {
-                      this.apollo
-                        .mutate<EditPostMutation, EditPostMutationVariables>({
-                          mutation: this.EDIT_POST_MUTATION,
-                          variables: { postId: this.post.id, body: data.body },
-                          update: (proxy, { data: { editPost } }) => {
-                            // Read the data from our cache for this query.
-                            const postsInCache = proxy.readQuery<
-                              PostPageQueryQuery,
-                              PostPageQueryQueryVariables
-                            >({
-                              query: PostPageQueryDocument,
-                              variables: { id: this.post.id },
-                            });
-                            // Add our todo from the mutation to the start.
-                            postsInCache.getPost.body = editPost.body;
-                            // Write our data back to the cache.
-                            proxy.writeQuery({
-                              query: PostPageQueryDocument,
-                              data: postsInCache,
-                            });
+                      this.editPost
+                        .mutate(
+                          { postId: this.post.id, body: data.body },
+                          {
+                            update: (proxy, { data: { editPost } }) => {
+                              // Read the data from our cache for this query.
+                              const postsInCache = proxy.readQuery<PostPageQueryQuery,
+                                PostPageQueryQueryVariables>({
+                                query: PostPageQueryDocument,
+                                variables: { id: this.post.id },
+                              });
+                              // Add our todo from the mutation to the start.
+                              postsInCache.getPost.body = editPost.body;
+                              // Write our data back to the cache.
+                              proxy.writeQuery({
+                                query: PostPageQueryDocument,
+                                data: postsInCache,
+                              });
+                            },
                           },
-                        })
+                        )
                         .subscribe(
                           (res) => {
                             console.log(`Edited`, res);
                           },
                           (errorResp) => {
                             console.error(`Error`, errorResp);
-                          }
+                          },
                         );
                     }
                   });

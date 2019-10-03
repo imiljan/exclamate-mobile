@@ -1,0 +1,31 @@
+query homePagePosts($limit: Int, $offset: Int) {
+  getPosts(limit: $limit, offset: $offset) @connection(key: "getPosts") {
+    id
+    body
+    created
+    likes
+    user {
+      id
+      username
+      firstName
+      lastName
+      email
+    }
+  }
+}
+
+mutation addPost($body: String!) {
+  createPost(body: $body) {
+    id
+    body
+    created
+    likes
+    user {
+      id
+      username
+      firstName
+      lastName
+      email
+    }
+  }
+}

@@ -3,31 +3,32 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="auth"></ion-back-button>
     </ion-buttons>
-    <ion-icon name="alert" color="primary" size="large" slot="end" padding></ion-icon>
+    <ion-icon class="ion-padding" color="primary" name="alert" size="large" slot="end"></ion-icon>
     <ion-title>Login</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content class="ion-padding">
   <form #f="ngForm" (ngSubmit)="onSubmit(f)">
     <ion-grid>
       <ion-row>
-        <ion-col size-sm="6" offset-sm="3">
+        <ion-col offset-sm="3" size-sm="6">
           <ion-list>
             <ion-item>
               <ion-label position="floating">Username</ion-label>
-              <ion-input type="text" ngModel name="username" required></ion-input>
+              <ion-input name="username" ngModel required type="text"></ion-input>
             </ion-item>
             <ion-item>
               <ion-label position="floating">Password</ion-label>
               <ion-input
-                type="password"
-                ngModel
-                name="password"
-                required
-                minlength="6"
                 #passwordCtrl="ngModel"
-              ></ion-input>
+                minlength="6"
+                name="password"
+                ngModel
+                required
+                type="password"
+              >
+              </ion-input>
             </ion-item>
             <ion-item *ngIf="!passwordCtrl.valid && passwordCtrl.touched" lines="none">
               <ion-label>
@@ -38,13 +39,13 @@
         </ion-col>
       </ion-row>
       <ion-row>
-        <ion-col size-sm="6" offset-sm="3">
+        <ion-col offset-sm="3" size-sm="6">
           <ion-button
-            type="submit"
-            color="primary"
-            expand="block"
-            shape="round"
-            [disabled]="!f.valid"
+              [disabled]="!f.valid"
+              color="primary"
+              expand="block"
+              shape="round"
+              type="submit"
           >
             Login
           </ion-button>

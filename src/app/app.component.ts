@@ -3,10 +3,9 @@ import { Router } from '@angular/router';
 import { AppState, Capacitor, Plugins } from '@capacitor/core';
 import { Platform } from '@ionic/angular';
 import { Apollo } from 'apollo-angular';
-import gql from 'graphql-tag';
 import { Subscription } from 'rxjs';
 import { filter, switchMap, take, tap } from 'rxjs/operators';
-import { MeCacheQuery } from 'src/generated/graphql';
+import { MeCacheGQL } from '../generated/graphql';
 
 import { AuthService } from './auth/auth.service';
 
@@ -25,7 +24,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private platform: Platform,
     private authService: AuthService,
     private router: Router,
-    private apollo: Apollo
+    private apollo: Apollo,
+    private meCache: MeCacheGQL,
   ) {
     this.initializeApp();
   }
@@ -53,17 +53,8 @@ export class AppComponent implements OnInit, OnDestroy {
         take(1),
         switchMap((isAuth) => {
           console.log(isAuth);
-          return this.apollo.query<MeCacheQuery>({
-            query: gql`
-              query MeCache {
-                me {
-                  id
-                  username
-                }
-              }
-            `,
-          });
-        })
+          return this.meCache.fetch();
+        }),
       )
       .subscribe((data) => {
         console.log('APP ON INIT', data.data);
@@ -75,7 +66,10 @@ export class AppComponent implements OnInit, OnDestroy {
     this.apollo
       .getClient()
       .clearStore()
-      .then(() => console.log('Cache cleared', this.apollo.getClient().cache));
+      .then(() => {
+        console.log('Cache cleared', this.apollo.getClient().cache);
+        this.router.navigate(['auth', 'login']).then(() => console.log('NAVIGATED to login'));
+      });
   }
 
   ngOnDestroy() {

@@ -1,0 +1,53 @@
+query PostPageQuery($id: ID!) {
+  getPost(id: $id) {
+    id
+    body
+    created
+    likes
+    user {
+      id
+      username
+      firstName
+      lastName
+      email
+    }
+    comments {
+      id
+      body
+      created
+      user {
+        id
+        username
+        email
+        firstName
+        lastName
+      }
+    }
+  }
+}
+
+mutation Comment($postId: Int!, $body: String!) {
+  createComment(postId: $postId, body: $body) {
+    id
+    body
+    created
+    user {
+      id
+      username
+      email
+      firstName
+      lastName
+    }
+  }
+}
+
+mutation DeletePost($postId: ID!) {
+  deletePost(postId: $postId)
+}
+
+mutation EditPost($postId: ID!, $body: String!) {
+  editPost(postId: $postId, body: $body) {
+    id
+    body
+  }
+}

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
-import { Post } from 'src/generated/graphql';
+import { Post } from '../../../../generated/graphql';
 
 @Component({
   selector: 'app-add-post',
@@ -14,7 +14,8 @@ export class AddPostComponent implements OnInit {
   @Input() post: Post;
   editMode = false;
 
-  constructor(private modalCtrl: ModalController, private alertCtrl: AlertController) {}
+  constructor(private modalCtrl: ModalController, private alertCtrl: AlertController) {
+  }
 
   ngOnInit() {
     if (this.post) {
@@ -55,7 +56,9 @@ export class AddPostComponent implements OnInit {
     }
   }
 
-  onTakePicture() {}
+  onTakePicture() {
+  }
 
-  onSelectFromStorage(event) {}
+  onSelectFromStorage(event) {
+  }
 }
